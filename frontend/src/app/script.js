@@ -4,7 +4,7 @@ let socket;
 
 export function initializeSocket() {
   if (!socket) {
-    socket = io("http://localhost:5000");
+    socket = io("http://localhost:8000");
   }
   return socket;
 }
