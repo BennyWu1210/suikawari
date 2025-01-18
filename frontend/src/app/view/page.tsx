@@ -17,15 +17,9 @@ export default function Page() {
   }, []);
 
   return (
-    <Box
-      padding={2}
-      sx={{
-        display: "flex",
-        flexDirection: "column", // Stack items vertically
-      }}
-    >
-      {/* Screen (Top Left) */}
-        <video
+    <Grid container height={"full"} spacing={2} sx={{ flex: 1 }}>
+      <Grid item xs={12} md={6}>
+      <video
          ref={videoRef}
           id="viewer"
           muted
@@ -33,6 +27,13 @@ export default function Page() {
           playsInline
           className="w-full h-auto rounded shadow-lg"
         />
-    </Box>
+      </Grid>
+      <Grid item xs={12} md={6} display="flex" alignItems="center" justifyContent="center">
+          <ControlPanel />
+      </Grid>
+      <Grid item xs={12}>
+        <CommentsField />
+      </Grid>
+  </Grid>
   );
 }
