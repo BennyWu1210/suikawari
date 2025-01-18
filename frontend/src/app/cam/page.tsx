@@ -2,58 +2,54 @@
 
 import React, { useEffect, useRef } from "react";
 import { Box, Paper, Button } from "@mui/material";
-import { useRouter } from "next/navigation";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
+import { setupCamera } from "../script.js";
 
 export default function CamPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const router = useRouter();
 
   useEffect(() => {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      console.error("getUserMedia is not supported in this browser.");
-      return;
+    if (videoRef.current) {
+      console.log("Initializing viewer...");
+      setupCamera(videoRef.current); // Pass the ref to the setupViewer function
     }
-
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: false })
-      .then((stream) => {
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-          videoRef.current
-            .play()
-            .catch((err) => console.error("Error trying to play the video:", err));
-        }
-      })
-      .catch((err) => {
-        console.error("Error accessing the camera:", err);
-      });
-
-    // Cleanup: stop camera when unmounting
-    return () => {
-      if (videoRef.current && videoRef.current.srcObject) {
-        const tracks = (videoRef.current.srcObject as MediaStream).getTracks();
-        tracks.forEach((track) => track.stop());
-      }
-    };
   }, []);
 
-  const handleBackToMain = () => {
-    router.push("/");
-  };
 
   return (
-    <div className="relative z-10 flex mt-5 items-center justify-center">
-        <Paper elevation={6} className="relative w-auto m-4 p-4 bg-opacity-20">
+    <div className="relative z-10 flex items-center justify-center h-screen">
+      <Paper
+        elevation={6}
+        sx={{
+          width: "auto",
+          padding: "16px",
+          backgroundColor: "rgba(0, 0, 0, 0.2)", // Semi-transparent black
+          borderRadius: "12px",
+        }}
+      >
         <Box className="flex justify-center items-center w-full h-auto">
           <video
             ref={videoRef}
+            id="camera"
             muted
             autoPlay
             playsInline
-            className="w-full h-auto rounded"
+            className="w-full h-auto rounded shadow-lg"
           />
         </Box>
+        <Button
+          sx={{
+            marginTop: "16px",
+            color: "white",
+            background: "linear-gradient(to right, #4e54c8, #8f94fb)", // Gradient for button
+            "&:hover": {
+              background: "linear-gradient(to right, #3b47a3, #6b6ee8)", // Darker gradient
+            },
+          }}
+        >
+          <KeyboardBackspaceIcon />
+          Back to Main
+        </Button>
       </Paper>
     </div>
   );
