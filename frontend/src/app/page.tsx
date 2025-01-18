@@ -69,7 +69,7 @@ export default function Page() {
             fontSize: isSmallScreen ? "1rem" : "1.5rem",
             padding: isSmallScreen ? "0.5rem 1.5rem" : "1rem 2.5rem",
             textTransform: "none",
-            color: "white",
+            color: theme.palette.mode === "dark" ? "white" : "black",
             transition: "background 0.3s, color 0.3s",
             backgroundColor: "rgba(0, 0, 0, 0)",
             "&:hover": {
