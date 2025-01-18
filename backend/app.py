@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 from flask_socketio import SocketIO, send, emit
 app = Flask(__name__)
-socketio = SocketIO(app)
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 # To store WebRTC signaling data temporarily
 cameraSID = None
@@ -21,7 +21,7 @@ def viewer():
 @app.route('/apex')
 def apex():
     # Endpoint to serve the viewer page
-    return render_template('apex.html')
+    return render_template('page.tsx')
 
 @socketio.on('connect')
 def handle_connect():
@@ -40,6 +40,56 @@ def handle_camera():
     global otherCameras
     otherCameras.append(request.sid)
     print("Camera is ", request.sid)
+
+@socketio.on('apexCamera')
+def handle_apex_camera():
+    global cameraSID
+    cameraSID = request.sid
+    print("Apex camera is ", cameraSID)
+
+@socketio.on('processingServer')
+def handle_processing_server():
+    global prossessingServer
+    prossessingServer = request.sid
+    print("Processing server is ", prossessingServer)
+
+@socketio.on('processResult')
+def process_result(data):
+    emit("processResult", to=data['camera'])
+    print("Sending process result to camera", data['camera'])
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    global cameraSID
+    if request.sid == cameraSID:
+        cameraSID = None
+    elif request.sid in otherCameras:
+        otherCameras.remove(request.sid)
+
+@socketio.on('apexCamera')
+def handle_apex_camera():
+    global cameraSID
+    cameraSID = request.sid
+    print("Apex camera is ", cameraSID)
+
+@socketio.on('processingServer')
+def handle_processing_server():
+    global prossessingServer
+    prossessingServer = request.sid
+    print("Processing server is ", prossessingServer)
+
+@socketio.on('processResult')
+def process_result(data):
+    emit("processResult", to=data['camera'])
+    print("Sending process result to camera", data['camera'])
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    global cameraSID
+    if request.sid == cameraSID:
+        cameraSID = None
+    elif request.sid in otherCameras:
+        otherCameras.remove(request.sid)
 
 @socketio.on('apexCamera')
 def handle_apex_camera():
@@ -102,6 +152,5 @@ def handle_process_result(data):
     print("Got processed result from processing server, sending it to viewer")
     emit('processResult', data['result'], to=data['viewer'])
 
-
 if __name__ == '__main__':
-    socketio.run(app, debug=True, port=8000)
+    socketio.run(app, debug=True, port=5000)
