@@ -1,4 +1,4 @@
-# 🚶‍♂️🦮 **StepMate: Your Walking Wingman** 🦮🚶‍♀️  
+# 🚶‍♂️🦮 **Suikawari: Walking Wingman for the Visually-Imparied** 🦮🚶‍♀️  
 
 **What’s better than a map? A buddy.**   
 Ever wished someone could walk with you and narrate your journey, telling you about obstacles, the closest taco stand, or what it feels like to be a superhero navigating with senses alone? Meet **StepMate**—the sassiest, most accessible walking assistant you'll ever need.  
