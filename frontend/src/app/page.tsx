@@ -1,32 +1,82 @@
 "use client";
 
-import { Box, Button, Typography, Stack } from "@mui/material";
-import Link from "next/link";
+import { useEffect, useState } from "react";
+import { io, Socket } from "socket.io-client";
+import NextLink from "next/link";
+import { Button, ButtonGroup } from "@mui/material";
 
-export default function Home() {
+export default function Page() {
+  const [socket, setSocket] = useState<Socket | null>(null);
+
+  useEffect(() => {
+    const newSocket = io("http://localhost:5000", {
+      transports: ["websocket", "polling"],
+    });
+
+    setSocket(newSocket);
+
+    newSocket.on("connect", () => {
+      console.log("Connected to Python SocketIO server! ID =", newSocket.id);
+    });
+
+    newSocket.on("requestForOffer", (viewerId: string) => {
+      console.log("Server wants an offer for viewer:", viewerId);
+    });
+
+    return () => {
+      newSocket.disconnect();
+    };
+  }, []);
+
   return (
-    <Box
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-      height="80vh"
-      flexDirection="column"
-    >
-      <Typography variant="h4" gutterBottom>
-        Welcome to the AI Guidance App
-      </Typography>
-      <Typography variant="body1" sx={{ mb: 4 }}>
-        This app helps a blind user with the next action by scanning real-time video.
-      </Typography>
-      
-      <Stack direction="row" spacing={2}>
-        <Link href="/cam">
-          <Button variant="contained" color="primary">Open Camera</Button>
-        </Link>
-        <Link href="/view">
-          <Button variant="outlined" color="primary">View Screen</Button>
-        </Link>
-      </Stack>
-    </Box>
+    <main className="relative flex flex-col items-center justify-start h-screen pt-28 z-10">
+      {/* Title */}
+      <h1 className="text-6xl font-bold mb-8">I AM</h1>
+
+      {/* Button group */}
+      <ButtonGroup variant="text" aria-label="Large button group">
+        {/* <Button
+          sx={{
+            fontSize: "1.5rem",
+            padding: "1rem 2.5rem",
+            textTransform: "none",
+            color: "white",
+            transition: "background 0.3s, color 0.3s",
+            "&:hover": {
+              background: "linear-gradient(to right, #3b47a3, #6b6ee8)", // Darker purple-to-blue gradient
+              color: "white",
+            },
+          }}
+        >
+          <NextLink
+            href="/cam"
+            style={{ color: "inherit", textDecoration: "none" }}
+          >
+            Camera
+          </NextLink>
+        </Button> */}
+        <Button
+          sx={{
+            fontSize: "1.5rem",
+            padding: "1rem 2.5rem",
+            textTransform: "none",
+            color: "white",
+            transition: "background 0.3s, color 0.3s",
+            backgroundColor: "rgba(0, 0, 0, 0)",
+            "&:hover": {
+              background: "linear-gradient(to right, rgba(217, 78, 106, 0.8), rgba(217, 83, 121, 0.8))", // Darker pink-to-red gradient
+              color: "white",
+            },
+          }}
+        >
+          <NextLink
+            href="/view"
+            style={{ color: "inherit", textDecoration: "none" }}
+          >
+            Watcher
+          </NextLink>
+        </Button>
+      </ButtonGroup>
+    </main>
   );
 }

@@ -4,17 +4,13 @@ import { Box, Grid, Typography, Paper } from "@mui/material";
 import CommentsField from "../components/CommentsField";
 import ControlPanel from "../components/ControlPanel";
 
-export default function ViewPage() {
+export default function Page() {
   return (
     <Box padding={2} 
       sx={{
       display: "flex", // Use flexbox layout
       flexDirection: "column", // Stack items vertically
-      minHeight: "100vh", // Ensure it fills the full height of the screen
     }}>
-      <Typography variant="h5" gutterBottom>
-        View Screen
-      </Typography>
 
       <Grid container spacing={2} sx={{ flex: 1 }}>
         {/* Screen (Top Left) */}
@@ -36,7 +32,7 @@ export default function ViewPage() {
         </Grid>
 
         {/* Comment Field (Bottom) */}
-        <Grid item xs={12}>
+        <Grid item >
           <CommentsField />
         </Grid>
       </Grid>

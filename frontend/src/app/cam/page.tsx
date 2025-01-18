@@ -43,24 +43,15 @@ export default function CamPage() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-25">
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<KeyboardBackspaceIcon />}
-          onClick={handleBackToMain}
-          className="absolute top-4 right-7"
-        >
-          Back to Home
-        </Button>
-        <Paper elevation={6} className="relative w-auto m-4 p-4">
-        <Box className="flex justify-center items-center w-full h-full mt-12">
+    <div className="relative z-10 flex mt-5 items-center justify-center">
+        <Paper elevation={6} className="relative w-auto m-4 p-4 bg-opacity-20">
+        <Box className="flex justify-center items-center w-full h-auto">
           <video
             ref={videoRef}
             muted
             autoPlay
             playsInline
-            className="w-full h-auto rounded shadow-lg"
+            className="w-full h-auto rounded"
           />
         </Box>
       </Paper>
