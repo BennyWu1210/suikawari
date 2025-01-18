@@ -1,41 +1,37 @@
 "use client";
 
-import { Box, Grid, Typography, Paper } from "@mui/material";
+import React, { useEffect, useRef } from "react";
+import { Box, Grid, Paper } from "@mui/material";
 import CommentsField from "../components/CommentsField";
 import ControlPanel from "../components/ControlPanel";
+import { setupViewer } from "../script";
 
 export default function Page() {
+  const videoRef = useRef(null); // Create a ref for the video element
+
+  useEffect(() => {
+    if (videoRef.current) {
+      console.log("Initializing viewer...");
+      setupViewer(videoRef.current); // Pass the ref to the setupViewer function
+    }
+  }, []);
+
   return (
-    <Box padding={2} 
+    <Box
+      padding={2}
       sx={{
-      display: "flex", // Use flexbox layout
-      flexDirection: "column", // Stack items vertically
-    }}>
-
-      <Grid container spacing={2} sx={{ flex: 1 }}>
-        {/* Screen (Top Left) */}
-        <Grid item xs={12} md={6}>
-          <Paper
-            elevation={2}
-            sx={{ height: 300, display: "flex", alignItems: "center", justifyContent: "center" }}
-          >
-            <Typography variant="body1">
-              {/* This could be a live feed snapshot or any representation */}
-              Screen Display Area
-            </Typography>
-          </Paper>
-        </Grid>
-
-        {/* Control Panel (Top Right) */}
-        <Grid item xs={12} md={6} display="flex" alignItems="center" justifyContent="center">
-          <ControlPanel />
-        </Grid>
-
-        {/* Comment Field (Bottom) */}
-        <Grid item >
-          <CommentsField />
-        </Grid>
-      </Grid>
+        display: "flex",
+        flexDirection: "column", // Stack items vertically
+      }}
+    >
+      {/* Screen (Top Left) */}
+        <video
+          id="viewer"
+          muted
+          autoPlay
+          playsInline
+          className="w-full h-auto rounded shadow-lg"
+        />
     </Box>
   );
 }
