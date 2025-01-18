@@ -19,6 +19,7 @@ Suikawari’s got your back (and your front, and your sides).
 1. **Live Video Magic** ✨: We process live video streams to detect objects, obstacles, and waypoints.  
 2. **Audio-Visual Storytelling** 🎙️: Hear it straight in your ear—what’s ahead, what’s moving, and what might move (like that squirrel).  
 3. **Experiential Mode** 🕶️: Curious about life without sight? Use Suikawari to feel the world in a whole new way. It’s humbling, eye-opening, and hilariously awkward at first.  
+<img width="876" alt="Screenshot 2025-01-18 at 4 16 26 PM" src="https://github.com/user-attachments/assets/434bd920-08c8-43c7-8918-2bd3782d6f89" />
 
 ---
 
