@@ -5,6 +5,8 @@ socketio = SocketIO(app)
 
 # To store WebRTC signaling data temporarily
 cameraSID = None
+otherCameras = []
+prossessingServer = None
 
 @app.route('/')
 def index():
@@ -15,6 +17,11 @@ def index():
 def viewer():
     # Endpoint to serve the viewer page
     return render_template('viewer.html')
+
+@app.route('/apex')
+def apex():
+    # Endpoint to serve the viewer page
+    return render_template('apex.html')
 
 @socketio.on('connect')
 def handle_connect():
@@ -30,8 +37,41 @@ def handle_camera():
     # Event handler for camera identification
     # store the camera SID
     global cameraSID
+    global otherCameras
+    otherCameras.append(request.sid)
+    print("Camera is ", request.sid)
+    if prossessingServer is not None:
+        emit("requestForOffer", request.sid, to=prossessingServer)
+        print("Requesting offer from camera", request.sid)
+
+@socketio.on('apexCamera')
+def handle_apex_camera():
+    global cameraSID
     cameraSID = request.sid
-    print("Camera connected", cameraSID)
+    print("Apex camera is ", cameraSID)
+
+@socketio.on('processingServer')
+def handle_processing_server():
+    global prossessingServer
+    prossessingServer = request.sid
+    print("Processing server is ", prossessingServer)
+
+    for camera in otherCameras:
+        emit("requestForOffer", camera, to=prossessingServer)
+        print("Requesting offer from camera", camera)
+
+@socketio.on('processResult')
+def process_result(data):
+    emit("processResult", to=data['camera'])
+    print("Sending process result to camera", data['camera'])
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    global cameraSID
+    if request.sid == cameraSID:
+        cameraSID = None
+    elif request.sid in otherCameras:
+        otherCameras.remove(request.sid)
 
 @socketio.on('offer')
 def handle_offer(data):

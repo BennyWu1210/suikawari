@@ -7,14 +7,20 @@ const servers = {
     ]
 };
 
+async function apex() {
+    socket.emit('apexCamera');
+}
+
+async function camera() {
+    socket.emit('iamcamera');
+}
+
 async function setupCamera() {
     const videoElement = document.getElementById('camera');
     const stream = await navigator.mediaDevices.getUserMedia({video: true, audio: false});
     videoElement.srcObject = stream;
 
     const peerConnections = {}; // Map viewer SIDs to their peer connections
-
-    socket.emit('iamcamera');
 
     socket.on('requestForOffer', async (viewerSID) => {
         const peerConnection = new RTCPeerConnection(servers);
