@@ -1,10 +1,15 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import { Box, Typography } from "@mui/material";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemText from "@mui/material/ListItemText";
+import React, { useState, useEffect, useRef, KeyboardEvent } from "react";
+import {
+  Box,
+  TextField,
+  IconButton,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+} from "@mui/material";
+import SendIcon from "@mui/icons-material/Send";
 import { FixedSizeList, ListChildComponentProps } from "react-window";
 
 interface FadeInSectionProps {
@@ -50,22 +55,46 @@ export default function CommentsField() {
     "hi",
     "ha",
   ]);
+  const [newComment, setNewComment] = useState<string>("");
+  const [listHeight, setListHeight] = useState<number>(0);
 
   const listRef = useRef<FixedSizeList<any>>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
+  // Measure height of the list container
   useEffect(() => {
-    const interval = setInterval(() => {
-      const newComment = `New comment at ${new Date().toLocaleTimeString()}`;
-      setComments((prev) => [...prev, newComment]);
-    }, 1000);
-    return () => clearInterval(interval);
+    if (containerRef.current) {
+      setListHeight(containerRef.current.clientHeight);
+    }
+    // Optionally, update height on window resize
+    const handleResize = () => {
+      if (containerRef.current) {
+        setListHeight(containerRef.current.clientHeight);
+      }
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Auto-scroll to latest comment whenever comments change
   useEffect(() => {
     if (listRef.current) {
       listRef.current.scrollToItem(comments.length, "end");
     }
   }, [comments]);
+
+  const handleSendComment = () => {
+    if (newComment.trim() === "") return;
+    setComments((prev) => [...prev, newComment.trim()]);
+    setNewComment("");
+  };
+
+  const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSendComment();
+    }
+  };
 
   const renderRow = (props: ListChildComponentProps) => {
     const { index, style } = props;
@@ -80,20 +109,23 @@ export default function CommentsField() {
 
   return (
     <FadeInSection>
-      <Box
-        sx={{
-          width: "100vw",
-          height: 300,
-          bgcolor: "background.paper",
-          position: "relative",
-          overflow: "hidden",
-          opacity: 0.8,
-          borderRadius: 2,
-          boxShadow: 2,
-        }}
-      >
+  <Box
+    sx={{
+      width: "100%",
+      height: 350, // total height for the container
+      bgcolor: "transparent",
+      borderRadius: 2,
+      boxShadow: 2,
+      display: "flex",
+      flexDirection: "column",
+      overflow: "hidden",
+    }}
+  >
+    {/* Container for measuring list height */}
+    <Box ref={containerRef} sx={{ flex: 1, overflow: "hidden" }}>
+      {listHeight > 0 && (
         <FixedSizeList
-          height={300}
+          height={listHeight}   // use measured height
           width="100%"
           itemSize={46}
           itemCount={comments.length}
@@ -102,7 +134,40 @@ export default function CommentsField() {
         >
           {renderRow}
         </FixedSizeList>
-      </Box>
-    </FadeInSection>
+      )}
+    </Box>
+
+    {/* Fixed-height Comment Input Field */}
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        borderTop: "1px solid #ccc",
+        padding: "4px",
+        height: 50,
+        backgroundColor: "transparent",
+        flexShrink: 0,
+      }}
+    >
+      <TextField
+        fullWidth
+        variant="outlined"
+        placeholder="Add a public comment..."
+        value={newComment}
+        onChange={(e) => setNewComment(e.target.value)}
+        onKeyPress={handleKeyPress}
+      />
+      <IconButton
+        color="primary"
+        aria-label="send"
+        onClick={handleSendComment}
+        disabled={!newComment.trim()}
+      >
+        <SendIcon />
+      </IconButton>
+    </Box>
+  </Box>
+</FadeInSection>
+
   );
 }
