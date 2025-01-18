@@ -57,13 +57,13 @@ tts = TTS("tts_models/en/ljspeech/tacotron2-DDC").to(device)
 # `speaker_wav` arguments
 
 # TTS with list of amplitude values as output, clone the voice from `speaker_wav`
-wav = tts.tts(
-  text="Hello world!",
-  speaker_wav="my/cloning/audio.mp3",
-)
+# wav = tts.tts(
+#   text="Hello, this is some text!",
+#   speaker_wav="my/cloning/output.wav",
+# )
 
 # TTS to a file, use a preset speaker
 tts.tts_to_file(
-  text="XTTS supports both, but many models allow only one of the `speaker` and",
+  text="Hello, this is some text!",
   file_path="output.wav"
 )

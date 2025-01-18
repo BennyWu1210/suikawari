@@ -1,21 +1,27 @@
 from flask import Flask, render_template, request, jsonify
 from flask_socketio import SocketIO, send, emit
 app = Flask(__name__)
-socketio = SocketIO(app, cors_allowed_origins="*")
-
+socketio = SocketIO(app)
 
 # To store WebRTC signaling data temporarily
 cameraSID = None
+otherCameras = []
+prossessingServer = None
 
-@app.route('/cam')
+@app.route('/')
 def index():
     # Endpoint to serve the camera streaming page
-    return render_template('page.tsx')
+    return render_template('index.html')
 
-@app.route('/view')
+@app.route('/viewer')
 def viewer():
     # Endpoint to serve the viewer page
-    return render_template('page.tsx')
+    return render_template('viewer.html')
+
+@app.route('/apex')
+def apex():
+    # Endpoint to serve the viewer page
+    return render_template('apex.html')
 
 @socketio.on('connect')
 def handle_connect():
@@ -31,8 +37,34 @@ def handle_camera():
     # Event handler for camera identification
     # store the camera SID
     global cameraSID
+    global otherCameras
+    otherCameras.append(request.sid)
+    print("Camera is ", request.sid)
+
+@socketio.on('apexCamera')
+def handle_apex_camera():
+    global cameraSID
     cameraSID = request.sid
-    print("Camera connected", cameraSID)
+    print("Apex camera is ", cameraSID)
+
+@socketio.on('processingServer')
+def handle_processing_server():
+    global prossessingServer
+    prossessingServer = request.sid
+    print("Processing server is ", prossessingServer)
+
+@socketio.on('processResult')
+def process_result(data):
+    emit("processResult", to=data['camera'])
+    print("Sending process result to camera", data['camera'])
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    global cameraSID
+    if request.sid == cameraSID:
+        cameraSID = None
+    elif request.sid in otherCameras:
+        otherCameras.remove(request.sid)
 
 @socketio.on('offer')
 def handle_offer(data):
@@ -58,6 +90,18 @@ def handle_answer(data):
 def handle_ice_candidate(data):
     emit('ice-candidate', data, to=data['to'])
 
+@socketio.on('image')
+def handle_image(data):
+    # emit the image to the processing server
+    print("Got image from camera, sending it to processing server")
+    emit('image', {"image": data['image'], "viewer": request.sid}, to=prossessingServer)
+
+@socketio.on('processResult')
+def handle_process_result(data):
+    # emit the result to the viewer
+    print("Got processed result from processing server, sending it to viewer")
+    emit('processResult', data['result'], to=data['viewer'])
+
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    socketio.run(app, debug=True, port=8000)
