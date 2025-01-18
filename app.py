@@ -23,7 +23,7 @@ def handle_connect():
     # if the client is a viewer, send the camera SID
     if cameraSID is not None:
         emit("requestForOffer", request.sid, to=cameraSID)
-        print("Requesting offer from camera")
+        print("Requesting offer from camera", request.sid)
 
 @socketio.on('iamcamera')
 def handle_camera():
@@ -31,7 +31,7 @@ def handle_camera():
     # store the camera SID
     global cameraSID
     cameraSID = request.sid
-    print("Camera connected")
+    print("Camera connected", cameraSID)
 
 @socketio.on('offer')
 def handle_offer(data):
@@ -39,8 +39,8 @@ def handle_offer(data):
     # data['viewer'] is the SID of the viewer
 
     # send the offer to the viewer
-    emit("requestForAnswerPlOffer", data['offer'], to=data['viewer'])
-    print("Got offer. Requesting answer from viewer and sending offer")
+    emit("requestForAnswerPlOffer", {"offer": data['offer'], "camera": cameraSID}, to=data['viewer'])
+    print("Got offer. Requesting answer from viewer and sending offer, offer: ", data['offer'])
 
 @socketio.on('answer')
 def handle_answer(data):
@@ -49,8 +49,14 @@ def handle_answer(data):
 
     # store the answer data for the camera
     # send the answer to the camera
-    emit("answerFromViewer", data['answer'], to=cameraSID)
-    print("Got answer from viewer and sending it to camera")
+    emit("answerFromViewer", {"answer": data['answer'], "viewer": request.sid}, to=cameraSID)
+    print("Got answer from viewer and sending it to camera. Answer:", data['answer'])
+
+
+@socketio.on('ice-candidate')
+def handle_ice_candidate(data):
+    emit('ice-candidate', data, to=data['to'])
+
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)

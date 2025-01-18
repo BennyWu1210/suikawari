@@ -1,49 +1,89 @@
 const socket = io();
 
+const servers = {
+    iceServers: [
+        {
+            urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'],
+        },
+    ],
+    iceCandidatePoolSize: 20,
+}
+
 async function setupCamera() {
     const videoElement = document.getElementById('camera');
-
-    // Access the camera stream
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+    const stream = await navigator.mediaDevices.getUserMedia({video: true, audio: false});
     videoElement.srcObject = stream;
 
-    const peerConnection = new RTCPeerConnection();
-    stream.getTracks().forEach(track => peerConnection.addTrack(track, stream));
+    const peerConnections = {}; // Map viewer SIDs to their peer connections
 
     socket.emit('iamcamera');
 
     socket.on('requestForOffer', async (viewerSID) => {
-        // Generate an offer
+        const peerConnection = new RTCPeerConnection(servers);
+        peerConnections[viewerSID] = peerConnection;
+
+        // Handle ICE candidates
+        peerConnection.onicecandidate = event => {
+            if (event.candidate) {
+                socket.emit('ice-candidate', { candidate: event.candidate, to: viewerSID });
+            }
+        };
+
+        // Add camera's tracks to this connection
+        stream.getTracks().forEach(track => peerConnection.addTrack(track, stream));
+
+        // Create and send offer
         const offer = await peerConnection.createOffer();
         await peerConnection.setLocalDescription(offer);
-
-        // Send the offer to the viewer
-        socket.emit('offer', { offer: offer, viewer: viewerSID });
+        socket.emit('offer', { offer: peerConnection.localDescription, viewer: viewerSID });
     });
 
-    // Listen for an answer from the viewer
-    socket.on('answerFromViewer', async (answer) => {
-        await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+    // Receive viewer's answer
+    socket.on('answerFromViewer', (data) => {
+        const { viewer, answer } = data;
+        const peerConnection = peerConnections[viewer];
+        peerConnection.setRemoteDescription(answer);
     });
+
+    // Receive ICE candidates
+    socket.on('ice-candidate', (data) => {
+        const peerConnection = peerConnections[data.from];
+        peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
+    });
+
+
 }
 
 async function setupViewer() {
     const videoElement = document.getElementById('viewer');
-
-    const peerConnection = new RTCPeerConnection();
-    peerConnection.ontrack = (event) => {
-        videoElement.srcObject = event.streams[0];
-    };
+    const peerConnection = new RTCPeerConnection(servers);
 
     // Listen for an offer from the camera
-    socket.on('requestForAnswerPlOffer', async (offer) => {
-        await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+    socket.on('requestForAnswerPlOffer', async (data) => {
+        // Handle ICE candidates
+        peerConnection.onicecandidate = event => {
+            if (event.candidate) {
+                socket.emit('ice-candidate', {candidate: event.candidate, to: data.camera, from: socket.id});
+            }
+        };
 
-        // Generate an answer
+        // Handle incoming tracks
+        const localStream = new MediaStream();
+        peerConnection.ontrack = event => {
+            localStream.addTrack(event.track);
+        };
+        videoElement.srcObject = localStream;
+
+        // Set remote description and create answer
+        await peerConnection.setRemoteDescription(data.offer);
         const answer = await peerConnection.createAnswer();
         await peerConnection.setLocalDescription(answer);
-
-        // Send the answer back to the camera
-        socket.emit('answer', { answer:answer});
+        socket.emit('answer', {answer: peerConnection.localDescription});
     });
+
+        // Receive ICE candidates
+    socket.on('ice-candidate', (data) => {
+        peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
+    });
+
 }
