@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import NextLink from "next/link";
 import { Button, ButtonGroup, useTheme, useMediaQuery } from "@mui/material";
+import { getSocket } from "./components/socket";
+
 
 export default function Page() {
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -11,11 +13,7 @@ export default function Page() {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
-    const newSocket = io("http://localhost:5000", {
-      transports: ["websocket", "polling"],
-    });
-
-    setSocket(newSocket);
+    const newSocket = getSocket();
 
     newSocket.on("connect", () => {
       console.log("Connected to Python SocketIO server! ID =", newSocket.id);

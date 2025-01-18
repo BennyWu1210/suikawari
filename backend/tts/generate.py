@@ -16,7 +16,7 @@ def generate_description(objects):
     Generate a natural language description of detected objects using OpenAI API.
     """
     object_list = ", ".join(objects)
-    prompt = f"Describe the following objects & what's in front of you based on coordinate and size. {object_list}."
+    prompt = f"You are an english commander. You will be provided with a list of coordinates in the eyes of a blind person, which comes from an object detection tool. You shall generate a short response, perhaps humorous, to guide the blind person who couldn't see what's ahead of them.  {object_list}."
     try:
         response = client.chat.completions.create(
             model="gpt-4o",
@@ -24,7 +24,7 @@ def generate_description(objects):
                 "role": "user",
                 "content": prompt
             }],
-            max_tokens=50
+            max_tokens=40
         )
         return response.choices[0].message.content
     except Exception as e:
