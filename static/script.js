@@ -2,12 +2,10 @@ const socket = io();
 
 const servers = {
     iceServers: [
-        {
-            urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'],
-        },
-    ],
-    iceCandidatePoolSize: 20,
-}
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'turn:your.turn.server:3478', username: 'user', credential: 'password' }
+    ]
+};
 
 async function setupCamera() {
     const videoElement = document.getElementById('camera');
@@ -34,7 +32,7 @@ async function setupCamera() {
 
         // Create and send offer
         const offer = await peerConnection.createOffer();
-        await peerConnection.setLocalDescription(offer);
+        await peerConnection.setLocalDescription();
         socket.emit('offer', { offer: peerConnection.localDescription, viewer: viewerSID });
     });
 
@@ -58,6 +56,9 @@ async function setupViewer() {
     const videoElement = document.getElementById('viewer');
     const peerConnection = new RTCPeerConnection(servers);
 
+    videoElement.autoplay = true;
+    videoElement.muted = true;
+
     // Listen for an offer from the camera
     socket.on('requestForAnswerPlOffer', async (data) => {
         // Handle ICE candidates
@@ -77,7 +78,7 @@ async function setupViewer() {
         // Set remote description and create answer
         await peerConnection.setRemoteDescription(data.offer);
         const answer = await peerConnection.createAnswer();
-        await peerConnection.setLocalDescription(answer);
+        await peerConnection.setLocalDescription();
         socket.emit('answer', {answer: peerConnection.localDescription});
     });
 
