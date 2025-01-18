@@ -40,9 +40,6 @@ def handle_camera():
     global otherCameras
     otherCameras.append(request.sid)
     print("Camera is ", request.sid)
-    if prossessingServer is not None:
-        emit("requestForOffer", request.sid, to=prossessingServer)
-        print("Requesting offer from camera", request.sid)
 
 @socketio.on('apexCamera')
 def handle_apex_camera():
@@ -55,10 +52,6 @@ def handle_processing_server():
     global prossessingServer
     prossessingServer = request.sid
     print("Processing server is ", prossessingServer)
-
-    for camera in otherCameras:
-        emit("requestForOffer", camera, to=prossessingServer)
-        print("Requesting offer from camera", camera)
 
 @socketio.on('processResult')
 def process_result(data):
@@ -96,6 +89,18 @@ def handle_answer(data):
 @socketio.on('ice-candidate')
 def handle_ice_candidate(data):
     emit('ice-candidate', data, to=data['to'])
+
+@socketio.on('image')
+def handle_image(data):
+    # emit the image to the processing server
+    print("Got image from camera, sending it to processing server")
+    emit('image', {"image": data['image'], "viewer": request.sid}, to=prossessingServer)
+
+@socketio.on('processResult')
+def handle_process_result(data):
+    # emit the result to the viewer
+    print("Got processed result from processing server, sending it to viewer")
+    emit('processResult', data['result'], to=data['viewer'])
 
 
 if __name__ == '__main__':

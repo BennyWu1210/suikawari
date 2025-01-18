@@ -12,7 +12,54 @@ async function apex() {
 }
 
 async function camera() {
-    socket.emit('iamcamera');
+    // Set up the webcam and canvas
+    const video = document.getElementById('camera');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    console.log("Camera function called");
+
+    let sema = true; // Semaphore to prevent multiple image captures
+
+    // on socket.io processResult console log the result
+    socket.on('processResult', (data) => {
+        console.log(data);
+    });
+
+    // Function to initialize the webcam
+    async function initWebcam() {
+        try {
+            video.srcObject = await navigator.mediaDevices.getUserMedia({ video: true });
+            video.play();
+
+            // Wait for the video to be ready
+            video.onloadedmetadata = () => {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+
+                // Start capturing and sending images every second
+                setInterval(captureAndSendImage, 10); // Call every 1000ms (1 second)
+            };
+        } catch (error) {
+            console.error("Error accessing the webcam:", error);
+        }
+    }
+
+    // Function to capture an image and send it to the server
+    function captureAndSendImage() {
+        // Draw the current frame from the video onto the canvas
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Convert the canvas image to a base64-encoded string
+        const imageData = canvas.toDataURL('image/jpeg', 0.7); // Adjust quality as needed (0.7 is 70%)
+
+        // Send the image data to the server
+        socket.emit('image', { image: imageData });
+        console.log("Image sent at", new Date().toISOString());
+    }
+
+    // Start the process
+    await initWebcam();
 }
 
 async function setupCamera() {
