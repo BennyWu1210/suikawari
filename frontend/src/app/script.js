@@ -4,7 +4,7 @@ let socket; // Declare socket variable outside
 
 export function initializeSocket() {
   if (!socket) {
-    socket = io("http://localhost:5000"); // Initialize socket with your backend URL
+    socket = io("http://localhost:8000"); // Initialize socket with your backend URL
   }
   return socket;
 }
@@ -53,6 +53,14 @@ export async function setupCamera(videoElement) {
     const peerConnection = peerConnections[viewer];
     peerConnection.setRemoteDescription(answer);
   });
+
+  // Receive viewer's answer
+  socket.on("answerFromViewer", (data) => {
+    const { response, to } = data;
+    alert("sent");
+    console.log(response, to);
+  });
+
 
   // Receive ICE candidates
   socket.on("ice-candidate", (data) => {

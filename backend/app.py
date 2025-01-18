@@ -1,7 +1,10 @@
 from flask import Flask, render_template, request, jsonify
 from flask_socketio import SocketIO, send, emit
+from flask_cors import CORS
+
 app = Flask(__name__)
-socketio = SocketIO(app)
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
+socketio = SocketIO(app, cors_allowed_origins="http://localhost:3000")
 
 # To store WebRTC signaling data temporarily
 cameraSID = None

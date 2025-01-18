@@ -56,9 +56,13 @@ async def handle_offer(data):
             frame_objects.append({"label": label, "coordinates": (x1, y1, x2, y2)})
 
 
+        # Parse it into a list of strings
         object_labels = [f'label: {obj["label"]} coordinates: {obj["coordinates"]}' for obj in frame_objects]
+
+        # Generate a natural language description
         description = generate_description(object_labels)
 
+        # TODO: Audio output
 
         # Send detection results back
         await sio.emit('processResult', {'result': description, 'viewer': data['viewer']})
