@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, jsonify
 from flask_socketio import SocketIO, send, emit
-from flask_cors import CORS
 
 app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*")
@@ -57,8 +56,9 @@ def handle_processing_server():
 
 @socketio.on('processResult')
 def process_result(data):
-    emit("processResult", to=data['camera'])
-    print("Sending process result to camera", data['camera'])
+    print("PROCESSING APP.PY 59")
+    emit("processResult", data, to=data['viewer'])
+    print("Sending process result")
 
 @socketio.on('disconnect')
 def handle_disconnect():
@@ -68,55 +68,6 @@ def handle_disconnect():
     elif request.sid in otherCameras:
         otherCameras.remove(request.sid)
 
-@socketio.on('apexCamera')
-def handle_apex_camera():
-    global cameraSID
-    cameraSID = request.sid
-    print("Apex camera is ", cameraSID)
-
-@socketio.on('processingServer')
-def handle_processing_server():
-    global prossessingServer
-    prossessingServer = request.sid
-    print("Processing server is ", prossessingServer)
-
-@socketio.on('processResult')
-def process_result(data):
-    emit("processResult", to=data['camera'])
-    print("Sending process result to camera", data['camera'])
-
-@socketio.on('disconnect')
-def handle_disconnect():
-    global cameraSID
-    if request.sid == cameraSID:
-        cameraSID = None
-    elif request.sid in otherCameras:
-        otherCameras.remove(request.sid)
-
-@socketio.on('apexCamera')
-def handle_apex_camera():
-    global cameraSID
-    cameraSID = request.sid
-    print("Apex camera is ", cameraSID)
-
-@socketio.on('processingServer')
-def handle_processing_server():
-    global prossessingServer
-    prossessingServer = request.sid
-    print("Processing server is ", prossessingServer)
-
-@socketio.on('processResult')
-def process_result(data):
-    emit("processResult", to=data['camera'])
-    print("Sending process result to camera", data['camera'])
-
-@socketio.on('disconnect')
-def handle_disconnect():
-    global cameraSID
-    if request.sid == cameraSID:
-        cameraSID = None
-    elif request.sid in otherCameras:
-        otherCameras.remove(request.sid)
 
 @socketio.on('offer')
 def handle_offer(data):
@@ -148,11 +99,5 @@ def handle_image(data):
     print("Got image from camera, sending it to processing server")
     emit('image', {"image": data['image'], "viewer": request.sid}, to=prossessingServer)
 
-@socketio.on('processResult')
-def handle_process_result(data):
-    # emit the result to the viewer
-    print("Got processed result from processing server, sending it to viewer")
-    emit('processResult', data['result'], to=data['viewer'])
-
 if __name__ == '__main__':
-    socketio.run(app, debug=True, port=5000)
+    socketio.run(app, debug=True, port=8000)

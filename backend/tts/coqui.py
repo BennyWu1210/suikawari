@@ -63,7 +63,26 @@ tts = TTS("tts_models/en/ljspeech/tacotron2-DDC").to(device)
 # )
 
 # TTS to a file, use a preset speaker
-tts.tts_to_file(
-  text="Hello, this is some text!",
-  file_path="output.wav"
-)
+
+def generate_audio(text: str, output_path: str = "output.wav", model_name: str = "tts_models/en/ljspeech/tacotron2-DDC"):
+    """
+    Generate audio from text using Coqui TTS.
+
+    Args:
+        text (str): The text to convert to speech.
+        output_path (str): The path to save the output audio file.
+        model_name (str): The name of the pretrained TTS model to use.
+
+    Returns:
+        str: The path of the generated audio file.
+    """
+    try:      
+        # Generate audio
+        print("Generating audio...")
+        tts.tts_to_file(text=text, file_path=output_path)
+        
+        print(f"Audio generated successfully! File saved at: {output_path}")
+        return output_path
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None

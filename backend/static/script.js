@@ -23,7 +23,20 @@ async function camera() {
 
     // on socket.io processResult console log the result
     socket.on('processResult', (data) => {
-        console.log(data);
+        console.log("PROCESSED TEXT", data);
+        // if (data.audio) {
+        //     // Create an audio element to play the Base64-encoded audio
+        //     const audio = new Audio(`data:audio/wav;base64,${data.audio}`);
+        //     audio.play().catch((error) => {
+        //         console.error("Error playing audio:", error);
+        //     });
+        // }
+        var msg = new SpeechSynthesisUtterance();
+        msg.rate = 1.2; // Speed of speech
+        msg.pitch = 1.3; // Pitch of voice
+        msg.volume = 1; // Volume level
+        msg.text = data.result;
+        window.speechSynthesis.speak(msg);
     });
 
     // Function to initialize the webcam
@@ -55,7 +68,9 @@ async function camera() {
 
         // Send the image data to the server
         socket.emit('image', { image: imageData });
-        console.log("Image sent at", new Date().toISOString());
+        if (new Date().getSeconds() % 15 == 0) {
+            console.log("Image sent at", new Date().toISOString());
+        }
     }
 
     // Start the process
