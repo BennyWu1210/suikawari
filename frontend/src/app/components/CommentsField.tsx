@@ -102,6 +102,9 @@ export default function CommentsField() {
     if (listRef.current) {
       listRef.current.scrollToItem(comments.length, "end");
     }
+    var msg = new SpeechSynthesisUtterance();
+    msg.text = comments[comments.length - 1];
+    window.speechSynthesis.speak(msg);
   }, [comments]);
 
   const handleSendComment = () => {
