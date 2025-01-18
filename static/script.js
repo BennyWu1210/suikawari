@@ -38,7 +38,7 @@ async function camera() {
                 canvas.height = video.videoHeight;
 
                 // Start capturing and sending images every second
-                setInterval(captureAndSendImage, 10); // Call every 1000ms (1 second)
+                setInterval(captureAndSendImage, 100); // Call every 1000ms (1 second)
             };
         } catch (error) {
             console.error("Error accessing the webcam:", error);

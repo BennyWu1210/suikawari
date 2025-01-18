@@ -7,6 +7,7 @@ socketio = SocketIO(app)
 cameraSID = None
 otherCameras = []
 prossessingServer = None
+comments = []
 
 @app.route('/')
 def index():
@@ -102,6 +103,29 @@ def handle_process_result(data):
     print("Got processed result from processing server, sending it to viewer")
     emit('processResult', data['result'], to=data['viewer'])
 
+@socketio.on('comment')
+def handle_comment(data):
+    comments.append(data)
+    emit('comment', data, broadcast=True)
+
+# This needs something like
+# socket.on('comment', (data) => {
+#     CODE THAT ADDS THE COMMENT TO THE UI
+#})
+
+@socketio.on('getComments')
+def get_comments():
+    emit('comments', comments)
+
+# When the Viewer object is created, it will emit a 'getComments' event to the server to get the comments
+# The server will respond with a 'comments' event that contains the comments
+
+# you need a
+# socket.emit('getComments');
+# and a
+# socket.on('comments', (data) => {
+#     CODE THAT ADDS THE COMMENT TO THE UI
+#})
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
