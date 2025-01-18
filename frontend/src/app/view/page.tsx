@@ -26,6 +26,7 @@ export default function Page() {
     >
       {/* Screen (Top Left) */}
         <video
+         ref={videoRef}
           id="viewer"
           muted
           autoPlay

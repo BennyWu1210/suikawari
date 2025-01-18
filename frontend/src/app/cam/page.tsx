@@ -29,6 +29,7 @@ export default function CamPage() {
       >
         <Box className="flex justify-center items-center w-full h-auto">
           <video
+            ref={videoRef}
             id="camera"
             muted
             autoPlay
