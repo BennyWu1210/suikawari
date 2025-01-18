@@ -3,15 +3,20 @@
 import React, { useEffect, useRef } from "react";
 import { Box, Paper, Button } from "@mui/material";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
-import { camera } from "../script.js";
+import { setupCamera, apex } from "../script.js";
 
 export default function CamPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     async function initializeCamera() {
-      console.log("Setting up camera...");
-      camera();
+      if (videoRef.current) {
+        console.log("Notifying server as Apex camera...");
+        await apex();
+
+        console.log("Setting up camera...");
+        setupCamera(videoRef.current);
+      }
     }
     initializeCamera();
   }, []);
@@ -35,9 +40,6 @@ export default function CamPage() {
             autoPlay
             playsInline
             className="w-full h-auto rounded shadow-lg"
-          />
-          <canvas
-            id="canvas"
           />
         </Box>
         <Button

@@ -79,7 +79,7 @@ async def handle_offer(data):
 
 async def main():
     # Connect to the signaling server
-    await sio.connect('http://localhost:8000')
+    await sio.connect('http://localhost:5000')
     await sio.wait()
 
 # Run the event loop
