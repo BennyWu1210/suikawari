@@ -1,22 +1,32 @@
-// src/page.tsx
-import React from "react";
-import Video from "./components/Video";
-import Control from "./components/Control";
-import Comment from "./components/Comment";
+"use client";
+
+import { Box, Button, Typography, Stack } from "@mui/material";
+import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="grid grid-cols-3 min-h-screen p-8 gap-4">
-      {/* Left Column */}
-      <div className="col-span-1 space-y-4">
-        <Video />
-        <Control />
-      </div>
-
-      {/* Right Column */}
-      <div className="col-span-2">
-        <Comment />
-      </div>
-    </div>
+    <Box
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      height="80vh"
+      flexDirection="column"
+    >
+      <Typography variant="h4" gutterBottom>
+        Welcome to the AI Guidance App
+      </Typography>
+      <Typography variant="body1" sx={{ mb: 4 }}>
+        This app helps a blind user with the next action by scanning real-time video.
+      </Typography>
+      
+      <Stack direction="row" spacing={2}>
+        <Link href="/cam">
+          <Button variant="contained" color="primary">Open Camera</Button>
+        </Link>
+        <Link href="/view">
+          <Button variant="outlined" color="primary">View Screen</Button>
+        </Link>
+      </Stack>
+    </Box>
   );
 }
