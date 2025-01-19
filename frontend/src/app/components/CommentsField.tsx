@@ -46,7 +46,11 @@ function FadeInSection({ children }: FadeInSectionProps) {
   );
 }
 
-export default function CommentsField() {
+interface CommentsFieldProps {
+  speechActive: boolean;
+}
+
+export default function CommentsField({ speechActive }: CommentsFieldProps) {
   const [comments, setComments] = useState<string[]>([]);
   const [newComment, setNewComment] = useState<string>("");
   const [listHeight, setListHeight] = useState<number>(0);
@@ -99,11 +103,11 @@ export default function CommentsField() {
     if (listRef.current) {
       listRef.current.scrollToItem(comments.length, "end");
     }
-
-    var msg = new SpeechSynthesisUtterance();
-    console.log("comments", comments[comments.length - 1]);
-    msg.text = comments[comments.length - 1];
-    window.speechSynthesis.speak(msg);
+    if(speechActive && comments.length > 0) {
+      var msg = new SpeechSynthesisUtterance();
+      msg.text = comments[comments.length - 1];
+      window.speechSynthesis.speak(msg);
+    }
   }, [comments]);
 
   const handleSendComment = () => {
@@ -152,7 +156,6 @@ export default function CommentsField() {
           display: "flex",
           flexDirection: "column",
           overflow: "hidden",
-          paddingY: 2,
         }}
       >
         {/* Container for measuring list height */}
