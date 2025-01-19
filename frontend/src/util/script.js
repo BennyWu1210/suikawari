@@ -81,7 +81,6 @@ export async function setupCamera(videoElement) {
   // Receive viewer's answer
   socket.on("answerFromViewer", (data) => {
     const { response, to } = data;
-    alert("sent");
     console.log(response, to);
   });
 
