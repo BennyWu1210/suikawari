@@ -83,6 +83,16 @@ export default function CamPage() {
             className="w-full h-auto rounded shadow-lg"
           />
           <canvas id="canvas" />
+          {!audioEnabled && (
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{ marginTop: "16px" }}
+              onClick={enableAudio}
+            >
+              Enable Audio
+            </Button>
+          )}
         </Box>
       </Paper>
     </div>
