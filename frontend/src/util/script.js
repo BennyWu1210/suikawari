@@ -36,8 +36,9 @@ export async function setupCamera(videoElement) {
   if (typeof window === "undefined") return;
 
   const socket = initializeSocket();
+  
   const stream = await navigator.mediaDevices.getUserMedia({
-    video: true,
+    video: { facingMode: { ideal: "environment" } },
     audio: false,
   });
   videoElement.srcObject = stream;
@@ -115,7 +116,7 @@ export async function camera() {
   async function initWebcam() {
     try {
       video.srcObject = await navigator.mediaDevices.getUserMedia({
-        video: true,
+        video: { facingMode: { ideal: "environment" } }, 
       });
       video.play();
 
@@ -176,6 +177,12 @@ export async function setupViewer(videoElement) {
   peerConnection.ontrack = (event) => {
     localStream.addTrack(event.track);
   };
+
+  peerConnection.oniceconnectionstatechange = function() {
+    if(peerConnection.iceConnectionState == 'disconnected') {
+      location.reload();
+    }
+  }
 
   socket.on("requestForAnswerPlOffer", async (data) => {
     await peerConnection.setRemoteDescription(data.offer);
