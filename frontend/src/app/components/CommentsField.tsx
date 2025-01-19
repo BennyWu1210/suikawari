@@ -103,7 +103,7 @@ export default function CommentsField({ speechActive }: CommentsFieldProps) {
     if (listRef.current) {
       listRef.current.scrollToItem(comments.length, "end");
     }
-    if(speechActive && comments.length > 0) {
+    if (speechActive && comments.length > 0) {
       var msg = new SpeechSynthesisUtterance();
       msg.text = comments[comments.length - 1];
       window.speechSynthesis.speak(msg);
@@ -129,7 +129,15 @@ export default function CommentsField({ speechActive }: CommentsFieldProps) {
     return (
       <ListItem style={style} key={index} component="div" disablePadding>
         <ListItemButton>
-          <ListItemText primary={comments[index]} />
+          <ListItemText
+            primary={comments[index]}
+            sx={{
+              wordBreak: "break-word", // Break long words
+              whiteSpace: "normal", // Allow text to wrap
+              overflow: "hidden", // Hide overflowing content
+              textOverflow: "ellipsis", // Optional: Add ellipsis for overflowing text
+            }}
+          />
         </ListItemButton>
       </ListItem>
     );
@@ -155,11 +163,11 @@ export default function CommentsField({ speechActive }: CommentsFieldProps) {
           boxShadow: 2,
           display: "flex",
           flexDirection: "column",
-          overflow: "hidden",
+          overflowY: "hidden",
         }}
       >
         {/* Container for measuring list height */}
-        <Box ref={containerRef} sx={{ flex: 1, overflow: "hidden" }}>
+        <Box ref={containerRef} sx={{ flex: 1, overflowY: "auto" }}>
           {listHeight > 0 && (
             <FixedSizeList
               height={listHeight} // use measured height

@@ -27,8 +27,8 @@ export default function Page() {
     <Box
       height={`calc(100vh - ${navbarHeight}px)`}
       overflow="hidden"
+      className="py-2"
       display="flex"
-      padding={4}
       flexDirection={isSmallScreen ? "column" : "row"}
     >
       {/* Video and Control Panel Section */}
@@ -46,22 +46,11 @@ export default function Page() {
       >
         {/* Video Container */}
         <Box
-          // flex="1"
-          // display="flex"
-          // alignItems="center"
-          // justifyContent="center"
-          // sx={{ position: "relative", width: "100%" }}
-          sx={{
-            width: window.innerWidth > window.innerHeight ? "100%" : "auto",
-            height: window.innerWidth > window.innerHeight ? "auto" : "50vh",
-            maxHeight: "100%",
-            maxWidth: "100%",
-            flex:"1",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            position: "relative", // For positioning other elements if needed
-          }}
+          flex="1"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          sx={{ position: "relative", width: "100%" }}
         >
           <video
             ref={videoRef}
