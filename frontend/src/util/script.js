@@ -30,8 +30,6 @@ export async function apex() {
     });
   }
 
-  
-
   socket.on("processResult", (data) => {
     console.log(data);
     // var msg = new SpeechSynthesisUtterance();
@@ -53,7 +51,7 @@ export async function setupCamera(videoElement) {
   if (typeof window === "undefined") return;
 
   const socket = initializeSocket();
-  
+
   const stream = await navigator.mediaDevices.getUserMedia({
     video: { facingMode: { ideal: "environment" } },
     audio: false,
@@ -138,7 +136,7 @@ export async function camera() {
   async function initWebcam() {
     try {
       video.srcObject = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: { ideal: "environment" } }, 
+        video: { facingMode: { ideal: "environment" } },
       });
       video.play();
 
@@ -200,11 +198,11 @@ export async function setupViewer(videoElement) {
     localStream.addTrack(event.track);
   };
 
-  peerConnection.oniceconnectionstatechange = function() {
-    if(peerConnection.iceConnectionState == 'disconnected') {
+  peerConnection.oniceconnectionstatechange = function () {
+    if (peerConnection.iceConnectionState == "disconnected") {
       location.reload();
     }
-  }
+  };
 
   socket.on("requestForAnswerPlOffer", async (data) => {
     await peerConnection.setRemoteDescription(data.offer);

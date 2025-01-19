@@ -10,7 +10,7 @@ export default function Page() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const theme = useTheme();
   const isSmallScreen = useMediaQuery("(max-width:600px)");
-  
+
   // Lift the speech toggle state here
   const [speechActive, setSpeechActive] = useState<boolean>(true);
 
@@ -56,7 +56,7 @@ export default function Page() {
             height: window.innerWidth > window.innerHeight ? "auto" : "50vh",
             maxHeight: "100%",
             maxWidth: "100%",
-            flex:"1",
+            flex: "1",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -89,7 +89,10 @@ export default function Page() {
               }}
             >
               {/* Pass speech props to ControlPanel */}
-              <ControlPanel speechActive={speechActive} setSpeechActive={setSpeechActive} />
+              <ControlPanel
+                speechActive={speechActive}
+                setSpeechActive={setSpeechActive}
+              />
             </Box>
           )}
         </Box>
@@ -106,7 +109,10 @@ export default function Page() {
             }}
           >
             {/* Pass speech props to ControlPanel */}
-            <ControlPanel speechActive={speechActive} setSpeechActive={setSpeechActive} />
+            <ControlPanel
+              speechActive={speechActive}
+              setSpeechActive={setSpeechActive}
+            />
           </Box>
         )}
       </Box>

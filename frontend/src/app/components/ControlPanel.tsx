@@ -8,7 +8,7 @@ import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import SmartToyIcon from "@mui/icons-material/SmartToy";
 import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 import VolumeOffIcon from "@mui/icons-material/VolumeOff";
-import BackHandIcon from '@mui/icons-material/BackHand';
+import BackHandIcon from "@mui/icons-material/BackHand";
 import { useState, useEffect, useRef } from "react";
 import { initializeSocket } from "@/util/script";
 
@@ -17,7 +17,10 @@ interface ControlPanelProps {
   setSpeechActive: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function ControlPanel({ speechActive, setSpeechActive }: ControlPanelProps) {
+export default function ControlPanel({
+  speechActive,
+  setSpeechActive,
+}: ControlPanelProps) {
   const [comments, setComments] = useState<string[]>([]);
   const theme = useTheme();
   const socketRef = useRef<any>(null);
@@ -63,7 +66,7 @@ export default function ControlPanel({ speechActive, setSpeechActive }: ControlP
           break;
         case "stop":
           handleSendComment("STOP!");
-            break;
+          break;
         default:
           break;
       }
@@ -80,34 +83,64 @@ export default function ControlPanel({ speechActive, setSpeechActive }: ControlP
   };
 
   return (
-    <Box display="flex" alignItems="center" gap={4} marginTop={2} sx={{
-      flexDirection: { xs: "column", md: "row" }, 
-    }}>
+    <Box
+      display="flex"
+      alignItems="center"
+      gap={4}
+      marginTop={2}
+      sx={{
+        flexDirection: { xs: "column", md: "row" },
+      }}
+    >
       {/* Directional control buttons */}
       <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
-        <IconButton aria-label="forward" onClick={() => handleMove("forward")} sx={buttonStyle}>
+        <IconButton
+          aria-label="forward"
+          onClick={() => handleMove("forward")}
+          sx={buttonStyle}
+        >
           <ArrowDropUpIcon color="primary" fontSize="large" />
         </IconButton>
         <Box display="flex" justifyContent="center" gap={1}>
-          <IconButton aria-label="left" onClick={() => handleMove("left")} sx={buttonStyle}>
+          <IconButton
+            aria-label="left"
+            onClick={() => handleMove("left")}
+            sx={buttonStyle}
+          >
             <ArrowLeftIcon color="primary" fontSize="large" />
           </IconButton>
-          <IconButton aria-label="stop" onClick={() => handleMove("stop")} sx={buttonStyle}>
+          <IconButton
+            aria-label="stop"
+            onClick={() => handleMove("stop")}
+            sx={buttonStyle}
+          >
             <BackHandIcon color="primary" fontSize="large" />
           </IconButton>
-          <IconButton aria-label="right" onClick={() => handleMove("right")} sx={buttonStyle}>
+          <IconButton
+            aria-label="right"
+            onClick={() => handleMove("right")}
+            sx={buttonStyle}
+          >
             <ArrowRightIcon color="primary" fontSize="large" />
           </IconButton>
         </Box>
-        <IconButton aria-label="backward" onClick={() => handleMove("backward")} sx={buttonStyle}>
+        <IconButton
+          aria-label="backward"
+          onClick={() => handleMove("backward")}
+          sx={buttonStyle}
+        >
           <ArrowDropDownIcon color="primary" fontSize="large" />
         </IconButton>
       </Box>
 
-      <IconButton aria-label="ai" onClick={() => handleMove("stop")} sx={buttonStyle}>
+      <IconButton
+        aria-label="ai"
+        onClick={() => handleMove("stop")}
+        sx={buttonStyle}
+      >
         <SmartToyIcon color="primary" fontSize="medium" />
       </IconButton>
-      
+
       {/* Voice toggle button */}
       <IconButton
         aria-label="toggle-speech"
