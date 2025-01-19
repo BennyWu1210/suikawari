@@ -8,7 +8,7 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
-  useMediaQuery
+  useMediaQuery,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import { FixedSizeList, ListChildComponentProps } from "react-window";
@@ -59,7 +59,7 @@ export default function CommentsField() {
   useEffect(() => {
     const socket = initializeSocket();
     socketRef.current = socket;
-    
+
     // Request initial comments
     socket.emit("getComments");
 
@@ -99,9 +99,9 @@ export default function CommentsField() {
     if (listRef.current) {
       listRef.current.scrollToItem(comments.length, "end");
     }
-    
+
     var msg = new SpeechSynthesisUtterance();
-    console.log('comments', comments[comments.length - 1]);
+    console.log("comments", comments[comments.length - 1]);
     msg.text = comments[comments.length - 1];
     window.speechSynthesis.speak(msg);
   }, [comments]);
@@ -134,83 +134,86 @@ export default function CommentsField() {
   const isLargeScreen = useMediaQuery("(min-width:1024px)");
   const isSmallScreen = useMediaQuery("(max-width:600px)");
 
-  const containerHeight = isLargeScreen ? "87vh" : isSmallScreen ? "50vh" : "60vh";
+  const containerHeight = isLargeScreen
+    ? "87vh"
+    : isSmallScreen
+      ? "50vh"
+      : "60vh";
 
   return (
     <FadeInSection>
-    <Box
-      sx={{
-        width: "100%",
-        height: containerHeight,
-        bgcolor: "transparent",
-        borderRadius: 2,
-        boxShadow: 2,
-        display: "flex",
-        flexDirection: "column",
-        overflow: "hidden",
-        paddingY: 2
-      }}
-    >
-    {/* Container for measuring list height */}
-    <Box ref={containerRef} sx={{ flex: 1, overflow: "hidden" }}>
-      {listHeight > 0 && (
-        <FixedSizeList
-          height={listHeight}   // use measured height
-          width="100%"
-          itemSize={46}
-          itemCount={comments.length}
-          overscanCount={15}
-          ref={listRef}
-        >
-          {renderRow}
-        </FixedSizeList>
-      )}
-    </Box>
-
-    {/* Fixed-height Comment Input Field */}
-    <Box
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        borderTop: "1px solid #ccc",
-        padding: "4px",
-        height: 50,
-        backgroundColor: "transparent",
-        flexShrink: 0,
-      }}
-    >
-      <TextField
-        fullWidth
-        variant="outlined"
-        placeholder="Add a public comment..."
-        value={newComment}
-        onChange={(e) => setNewComment(e.target.value)}
-        onKeyPress={handleKeyPress}
+      <Box
         sx={{
-          "& .MuiOutlinedInput-root": {
-            "& fieldset": {
-              border: "none", // Remove the outline
-            },
-            "&:hover fieldset": {
-              border: "none", // Remove the outline on hover
-            },
-            "&.Mui-focused fieldset": {
-              border: "none", // Remove the outline when focused
-            },
-          },
+          width: "100%",
+          height: containerHeight,
+          bgcolor: "transparent",
+          borderRadius: 2,
+          boxShadow: 2,
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden",
+          paddingY: 2,
         }}
-      />
-      <IconButton
-        color="primary"
-        aria-label="send"
-        onClick={handleSendComment}
-        disabled={!newComment.trim()}
       >
-        <SendIcon />
-      </IconButton>
-    </Box>
-  </Box>
-</FadeInSection>
+        {/* Container for measuring list height */}
+        <Box ref={containerRef} sx={{ flex: 1, overflow: "hidden" }}>
+          {listHeight > 0 && (
+            <FixedSizeList
+              height={listHeight} // use measured height
+              width="100%"
+              itemSize={46}
+              itemCount={comments.length}
+              overscanCount={15}
+              ref={listRef}
+            >
+              {renderRow}
+            </FixedSizeList>
+          )}
+        </Box>
 
+        {/* Fixed-height Comment Input Field */}
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            borderTop: "1px solid #ccc",
+            padding: "4px",
+            height: 50,
+            backgroundColor: "transparent",
+            flexShrink: 0,
+          }}
+        >
+          <TextField
+            fullWidth
+            variant="outlined"
+            placeholder="Add a public comment..."
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            onKeyPress={handleKeyPress}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  border: "none", // Remove the outline
+                },
+                "&:hover fieldset": {
+                  border: "none", // Remove the outline on hover
+                },
+                "&.Mui-focused fieldset": {
+                  border: "none", // Remove the outline when focused
+                },
+              },
+            }}
+          />
+          <IconButton
+            color="primary"
+            aria-label="send"
+            onClick={handleSendComment}
+            disabled={!newComment.trim()}
+          >
+            <SendIcon />
+          </IconButton>
+        </Box>
+      </Box>
+    </FadeInSection>
   );
 }

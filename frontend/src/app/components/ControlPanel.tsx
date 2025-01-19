@@ -2,11 +2,11 @@
 "use client";
 
 import { Box, IconButton, useTheme } from "@mui/material";
-import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
-import ArrowRightIcon from '@mui/icons-material/ArrowRight';
-import SmartToyIcon from '@mui/icons-material/SmartToy';
+import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
+import ArrowRightIcon from "@mui/icons-material/ArrowRight";
+import SmartToyIcon from "@mui/icons-material/SmartToy";
 import { useState, useEffect, useRef } from "react";
 import { initializeSocket } from "@/util/script";
 
@@ -19,7 +19,7 @@ export default function ControlPanel() {
   useEffect(() => {
     const socket = initializeSocket();
     socketRef.current = socket;
-    
+
     // Request initial comments
     socket.emit("getComments");
 
@@ -33,27 +33,26 @@ export default function ControlPanel() {
     };
   }, []);
 
-
   const handleSendComment = (commentText: string) => {
     socketRef.current.emit("comment", commentText);
-  }
+  };
   const handleMove = (direction: string) => {
     console.log(`Move: ${direction}`);
 
     // Emit movement command via socket
     if (socketRef.current) {
-      switch(direction) {
+      switch (direction) {
         case "forward":
-          handleSendComment("move forward")
+          handleSendComment("move forward");
           break;
         case "backward":
-          handleSendComment("move backward")
+          handleSendComment("move backward");
           break;
         case "left":
-          handleSendComment("turn left")
+          handleSendComment("turn left");
           break;
         case "right":
-          handleSendComment("turn right")
+          handleSendComment("turn right");
           break;
         default:
           // ai logic here
@@ -72,7 +71,8 @@ export default function ControlPanel() {
           sx={{
             width: 50,
             height: 50,
-            backgroundColor: theme.palette.mode === "dark" ? "#505050" : "#dcdcdc",
+            backgroundColor:
+              theme.palette.mode === "dark" ? "#505050" : "#dcdcdc",
             ":hover": { backgroundColor: "background.paper" },
           }}
         >
@@ -87,7 +87,8 @@ export default function ControlPanel() {
             sx={{
               width: 50,
               height: 50,
-              backgroundColor: theme.palette.mode === "dark" ? "#505050" : "#dcdcdc",
+              backgroundColor:
+                theme.palette.mode === "dark" ? "#505050" : "#dcdcdc",
               ":hover": { backgroundColor: "background.paper" },
               mx: 1,
             }}
@@ -100,7 +101,8 @@ export default function ControlPanel() {
             sx={{
               width: 50,
               height: 50,
-              backgroundColor: theme.palette.mode === "dark" ? "#505050" : "#dcdcdc",
+              backgroundColor:
+                theme.palette.mode === "dark" ? "#505050" : "#dcdcdc",
               ":hover": { backgroundColor: "background.paper" },
               mx: 1,
             }}
@@ -113,7 +115,8 @@ export default function ControlPanel() {
             sx={{
               width: 50,
               height: 50,
-              backgroundColor: theme.palette.mode === "dark" ? "#505050" : "#dcdcdc",
+              backgroundColor:
+                theme.palette.mode === "dark" ? "#505050" : "#dcdcdc",
               ":hover": { backgroundColor: "background.paper" },
               mx: 1,
             }}
@@ -130,7 +133,8 @@ export default function ControlPanel() {
             sx={{
               width: 50,
               height: 50,
-              backgroundColor: theme.palette.mode === "dark" ? "#505050" : "#dcdcdc",
+              backgroundColor:
+                theme.palette.mode === "dark" ? "#505050" : "#dcdcdc",
               ":hover": { backgroundColor: "background.paper" },
               mx: 1,
             }}

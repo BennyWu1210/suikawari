@@ -6,7 +6,6 @@ import NextLink from "next/link";
 import { Button, ButtonGroup, useTheme, useMediaQuery } from "@mui/material";
 import { getSocket } from "./components/socket";
 
-
 export default function Page() {
   const [socket, setSocket] = useState<Socket | null>(null);
   const theme = useTheme();
@@ -29,19 +28,29 @@ export default function Page() {
   }, []);
 
   return (
-    <main className="relative flex flex-col items-center justify-start h-screen pt-28 z-10"
+    <main
+      className="relative flex flex-col items-center justify-start h-screen pt-28 z-10"
       style={{
         padding: isSmallScreen ? "1rem" : "2rem",
         textAlign: "center",
-      }}>
+      }}
+    >
       {/* Title */}
-      <h1 className="font-bold mb-8" 
+      <h1
+        className="font-bold mb-8"
         style={{
           fontSize: isSmallScreen ? "2.5rem" : "4rem",
-        }}>I AM</h1>
+        }}
+      >
+        I AM
+      </h1>
 
       {/* Button group */}
-      <ButtonGroup variant="text" aria-label="Large button group" orientation={isSmallScreen ? "vertical" : "horizontal"}>
+      <ButtonGroup
+        variant="text"
+        aria-label="Large button group"
+        orientation={isSmallScreen ? "vertical" : "horizontal"}
+      >
         {/* <Button
           sx={{
             fontSize: "1.5rem",
@@ -71,7 +80,8 @@ export default function Page() {
             transition: "background 0.3s, color 0.3s",
             backgroundColor: "rgba(0, 0, 0, 0)",
             "&:hover": {
-              background: "linear-gradient(to right, rgba(217, 78, 106, 0.8), rgba(217, 83, 121, 0.8))", // Darker pink-to-red gradient
+              background:
+                "linear-gradient(to right, rgba(217, 78, 106, 0.8), rgba(217, 83, 121, 0.8))", // Darker pink-to-red gradient
               color: "white",
             },
           }}

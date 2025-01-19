@@ -25,17 +25,17 @@ export default function Navbar({ themeMode, toggleTheme }: NavbarProps) {
         <Toolbar className="flex justify-between items-center px-7">
           {/* Title */}
           <NextLink href="/">
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{
-              color: themeMode === "dark" ? "white" : "black",
-              transition: "color 0.3s",
-            }}
-          >
-             🍉 Suikawari      
-          </Typography>
-          </NextLink>       
+            <Typography
+              variant="h6"
+              component="div"
+              sx={{
+                color: themeMode === "dark" ? "white" : "black",
+                transition: "color 0.3s",
+              }}
+            >
+              🍉 Suikawari
+            </Typography>
+          </NextLink>
           {/* {path !== '/' && <NextLink href="/"> Back to Home </NextLink>} */}
           <IconButton
             edge="end"
