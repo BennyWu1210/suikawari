@@ -34,7 +34,7 @@ async def handle_offer(data):
         
         
         # REMOVE ME: For testing purposes, we limit the incoming frame processing rate
-        if round(time.time()) % 18 != 0:
+        if round(time.time()) % 3 != 0:
             return
 
         print("STARTED")
@@ -76,15 +76,15 @@ async def handle_offer(data):
         #     audio_base64 = base64.b64encode(audio_file.read()).decode('utf-8')
 
         # Send detection results and audio data back
-        await sio.emit('processResult', {
+        sio.emit('processResult', {
             'result': description,
             'viewer': data['viewer'],
             # 'audio': audio_base64
         })
 
-        cv2.imshow("Received Image", img)
-        print("Image displayed")
-        cv2.waitKey(1)  # Wait for a short time to refresh the display
+        # cv2.imshow("Received Image", img)
+        # print("Image displayed")
+        # cv2.waitKey(1)  # Wait for a short time to refresh the display
     except Exception as e:
         print(f"Error handling image: {e}")
 
@@ -94,7 +94,8 @@ async def handle_offer(data):
 
 async def main():
     # Connect to the signaling server
-    await sio.connect('http://localhost:8000')
+    await sio.connect('https://suikawari.photo')
+    # await sio.connect('http://localhost:8000')
     await sio.wait()
 
 # Run the event loop

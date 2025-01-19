@@ -32,15 +32,15 @@ async function camera() {
     //     // Create an audio element to play the Base64-encoded audio
     //     const audio = new Audio(`data:audio/wav;base64,${data.audio}`);
     //     audio.play().catch((error) => {
-    //         console.error("Error playing audio:", error);
+    //         console.error("Erro=r playing audio:", error);
     //     });
     // }
-    var msg = new SpeechSynthesisUtterance();
-    msg.rate = 1.2; // Speed of speech
-    msg.pitch = 1.3; // Pitch of voice
-    msg.volume = 1; // Volume level
-    msg.text = data.result;
-    window.speechSynthesis.speak(msg);
+    // var msg = new SpeechSynthesisUtterance();
+    // msg.rate = 1.2; // Speed of speech
+    // msg.pitch = 1.3; // Pitch of voice
+    // msg.volume = 1; // Volume level
+    // msg.text = data.result;
+    // window.speechSynthesis.speak(msg);
   });
 
   // Function to initialize the webcam

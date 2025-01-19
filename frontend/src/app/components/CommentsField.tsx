@@ -101,6 +101,7 @@ export default function CommentsField() {
     }
 
     var msg = new SpeechSynthesisUtterance();
+    if(comments.length === 0) return;
     console.log("comments", comments[comments.length - 1]);
     msg.text = comments[comments.length - 1];
     window.speechSynthesis.speak(msg);

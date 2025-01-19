@@ -23,11 +23,28 @@ const servers = {
 
 export async function apex() {
   const socket = initializeSocket();
+
   if (!socket.connected) {
     await new Promise((resolve) => {
       socket.on("connect", resolve);
     });
   }
+
+  
+
+  socket.on("processResult", (data) => {
+    console.log(data);
+    // var msg = new SpeechSynthesisUtterance();
+    // msg.text = data.result;
+    // window.speechSynthesis.speak(msg);
+    var msg = new SpeechSynthesisUtterance();
+    msg.rate = 1.1; // Speed of speech
+    msg.pitch = 1.2; // Pitch of voice
+    msg.volume = 1; // Volume level
+    msg.text = data.result;
+    window.speechSynthesis.speak(msg);
+  });
+
   socket.emit("apexCamera");
   console.log("Apex camera notified to the server.");
 }
@@ -80,7 +97,6 @@ export async function setupCamera(videoElement) {
   // Receive viewer's answer
   socket.on("answerFromViewer", (data) => {
     const { response, to } = data;
-    alert("sent");
     console.log(response, to);
   });
 
@@ -106,7 +122,13 @@ export async function camera() {
   // on socket.io processResult console log the result
   socket.on("processResult", (data) => {
     console.log(data);
+    // var msg = new SpeechSynthesisUtterance();
+    // msg.text = data.result;
+    // window.speechSynthesis.speak(msg);
     var msg = new SpeechSynthesisUtterance();
+    msg.rate = 1.1; // Speed of speech
+    msg.pitch = 1.2; // Pitch of voice
+    msg.volume = 1; // Volume level
     msg.text = data.result;
     window.speechSynthesis.speak(msg);
   });
