@@ -129,11 +129,20 @@ export default function CommentsField({ speechActive }: CommentsFieldProps) {
     return (
       <ListItem style={style} key={index} component="div" disablePadding>
         <ListItemButton>
-          <ListItemText primary={comments[index]} />
+          <ListItemText
+            primary={comments[index]}
+            sx={{
+              wordBreak: "break-word", // Break long words
+              whiteSpace: "normal",   // Allow text to wrap
+              overflow: "hidden",     // Hide overflowing content
+              textOverflow: "ellipsis", // Optional: Add ellipsis for overflowing text
+            }}
+          />
         </ListItemButton>
       </ListItem>
     );
   };
+  
 
   const isLargeScreen = useMediaQuery("(min-width:1024px)");
   const isSmallScreen = useMediaQuery("(max-width:600px)");
@@ -155,11 +164,11 @@ export default function CommentsField({ speechActive }: CommentsFieldProps) {
           boxShadow: 2,
           display: "flex",
           flexDirection: "column",
-          overflow: "hidden",
+          overflowY: "hidden",
         }}
       >
         {/* Container for measuring list height */}
-        <Box ref={containerRef} sx={{ flex: 1, overflow: "hidden" }}>
+        <Box ref={containerRef} sx={{ flex: 1, overflowY: "auto" }}>
           {listHeight > 0 && (
             <FixedSizeList
               height={listHeight} // use measured height
