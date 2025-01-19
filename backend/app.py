@@ -9,7 +9,6 @@ cameraSID = None
 otherCameras = []
 prossessingServer = None
 comments = []
-comments = []
 
 @app.route('/')
 def index():

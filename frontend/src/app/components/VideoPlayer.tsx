@@ -24,7 +24,12 @@ export default function VideoPlayer() {
       autoPlay
       muted
       playsInline
-      style={{ width: "100%", height: "auto", maxWidth: "100%", objectFit: "contain", }}
+      style={{
+        width: "100%",
+        height: "auto",
+        maxWidth: "100%",
+        objectFit: "contain",
+      }}
     />
   );
 }

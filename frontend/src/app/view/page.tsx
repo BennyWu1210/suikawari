@@ -23,21 +23,25 @@ export default function Page() {
   const navbarHeight = 64; // Example navbar height in px
 
   return (
-    <Box 
-      height={`calc(100vh - ${navbarHeight}px)`} 
+    <Box
+      height={`calc(100vh - ${navbarHeight}px)`}
       overflow="hidden"
       className="py-2"
       display="flex"
-      flexDirection={isSmallScreen? "column" : "row"}
+      flexDirection={isSmallScreen ? "column" : "row"}
     >
-    {/* Video and Control Panel Section */}
+      {/* Video and Control Panel Section */}
       <Box
         flex={isSmallScreen ? "none" : "1"}
         display="flex"
         flexDirection="column"
         justifyContent="space-between"
         alignItems="center"
-        sx={{ width: isSmallScreen ? "100%" : "70%", height: "100%", maxHeight: isSmallScreen ? "50vh" : "70vh" }}
+        sx={{
+          width: isSmallScreen ? "100%" : "70%",
+          height: "100%",
+          maxHeight: isSmallScreen ? "50vh" : "70vh",
+        }}
       >
         {/* Video Container */}
         <Box
@@ -77,13 +81,17 @@ export default function Page() {
           )}
         </Box>
 
-      {/* Control Panel for larger screens */}
+        {/* Control Panel for larger screens */}
         {!isSmallScreen && (
           <Box
             display="flex"
             alignItems="center"
             justifyContent="center"
-            sx={{width: "100%", flex: isSmallScreen ? "none" : "0 0 auto", marginTop: isSmallScreen ? "16px" : "auto",}}
+            sx={{
+              width: "100%",
+              flex: isSmallScreen ? "none" : "0 0 auto",
+              marginTop: isSmallScreen ? "16px" : "auto",
+            }}
           >
             <ControlPanel />
           </Box>

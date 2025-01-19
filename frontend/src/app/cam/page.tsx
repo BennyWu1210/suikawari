@@ -36,9 +36,7 @@ export default function CamPage() {
             playsInline
             className="w-full h-auto rounded shadow-lg"
           />
-          <canvas
-            id="canvas"
-          />
+          <canvas id="canvas" />
         </Box>
         <Button
           sx={{

@@ -1,78 +1,85 @@
 // src/components/ControlPanel.tsx
 "use client";
 
-import { Box, Button, IconButton, useTheme } from "@mui/material";
-import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
-import ArrowRightIcon from '@mui/icons-material/ArrowRight';
-import SmartToyIcon from '@mui/icons-material/SmartToy';
-import { useEffect } from "react";
-import { getSocket } from "../components/socket";
+import { Box, IconButton, useTheme } from "@mui/material";
+import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
+import ArrowRightIcon from "@mui/icons-material/ArrowRight";
+import SmartToyIcon from "@mui/icons-material/SmartToy";
+import { useState, useEffect, useRef } from "react";
+import { initializeSocket } from "@/util/script";
 
 export default function ControlPanel() {
-  "use client";
-
+  const [comments, setComments] = useState<string[]>([]);
   const theme = useTheme();
+  const socketRef = useRef<any>(null);
 
+  // Initialize socket on component mount
   useEffect(() => {
-    const socket = getSocket();
+    const socket = initializeSocket();
+    socketRef.current = socket;
 
-    socket.on("connect", () => {
-      console.log("Connected to Python server:", socket.id);
+    // Request initial comments
+    socket.emit("getComments");
+
+    // Listen for new comment broadcast
+    socket.on("comment", (comment: string) => {
+      setComments((prev) => [...prev, comment]);
     });
 
-    // Cleanup if needed
     return () => {
-      socket.off("connect");
-      // Do not call socket.disconnect() globally unless you want to close it altogether
+      socket.off("comment");
     };
   }, []);
 
-  // ...
+  const handleSendComment = (commentText: string) => {
+    socketRef.current.emit("comment", commentText);
+  };
   const handleMove = (direction: string) => {
     console.log(`Move: ${direction}`);
 
-    const socket = getSocket();
-    socket.emit("move", { direction });
+    // Emit movement command via socket
+    if (socketRef.current) {
+      switch (direction) {
+        case "forward":
+          handleSendComment("move forward");
+          break;
+        case "backward":
+          handleSendComment("move backward");
+          break;
+        case "left":
+          handleSendComment("turn left");
+          break;
+        case "right":
+          handleSendComment("turn right");
+          break;
+        default:
+          // ai logic here
+          break;
+      }
+    }
   };
 
   return (
-    // <Box
-    //   display="flex"
-    //   justifyContent="center"
-    //   border="1px solid #ccc"
-    //   padding={2}
-    //   borderRadius={1}
-    //   mt={2}
-    // >
-    //   <Button variant="contained" color="secondary" sx={{ mx: 1 }}>
-    //     Pause
-    //   </Button>
-    //   <Button variant="outlined" color="secondary" sx={{ mx: 1 }}>
-    //     Stop
-    //   </Button>
-    //   <Button variant="contained" color="primary" sx={{ mx: 1 }}>
-    //     Start
-    //   </Button>
-    // </Box>
     <Box display="flex" flexDirection="column" alignItems="center" mt={2}>
       <Box display="flex" flexDirection="column" alignItems="center">
         {/* Up */}
         <IconButton
-          aria-label="up"
-          onClick={() => handleMove("up")}
+          aria-label="forward"
+          onClick={() => handleMove("forward")}
           sx={{
             width: 50,
             height: 50,
-            backgroundColor: theme.palette.mode === "dark" ? "#505050" : "#dcdcdc",
+            backgroundColor:
+              theme.palette.mode === "dark" ? "#505050" : "#dcdcdc",
             ":hover": { backgroundColor: "background.paper" },
           }}
         >
           <ArrowDropUpIcon color="primary" fontSize="large" />
         </IconButton>
 
-        {/* Left, AI, Right */}
+        {/* Left, Right */}
         <Box display="flex" justifyContent="center" mt={1}>
           <IconButton
             aria-label="left"
@@ -80,7 +87,8 @@ export default function ControlPanel() {
             sx={{
               width: 50,
               height: 50,
-              backgroundColor: theme.palette.mode === "dark" ? "#505050" : "#dcdcdc",
+              backgroundColor:
+                theme.palette.mode === "dark" ? "#505050" : "#dcdcdc",
               ":hover": { backgroundColor: "background.paper" },
               mx: 1,
             }}
@@ -89,11 +97,12 @@ export default function ControlPanel() {
           </IconButton>
           <IconButton
             aria-label="ai"
-            onClick={() => handleMove("")} // not sure 
+            onClick={() => handleMove("ai")} // Sending AI command or similar
             sx={{
               width: 50,
               height: 50,
-              backgroundColor: theme.palette.mode === "dark" ? "#505050" : "#dcdcdc",
+              backgroundColor:
+                theme.palette.mode === "dark" ? "#505050" : "#dcdcdc",
               ":hover": { backgroundColor: "background.paper" },
               mx: 1,
             }}
@@ -106,7 +115,8 @@ export default function ControlPanel() {
             sx={{
               width: 50,
               height: 50,
-              backgroundColor: theme.palette.mode === "dark" ? "#505050" : "#dcdcdc",
+              backgroundColor:
+                theme.palette.mode === "dark" ? "#505050" : "#dcdcdc",
               ":hover": { backgroundColor: "background.paper" },
               mx: 1,
             }}
@@ -117,13 +127,14 @@ export default function ControlPanel() {
 
         {/* Down */}
         <Box display="flex" justifyContent="center" mt={1}>
-        <IconButton
-            aria-label="down"
-            onClick={() => handleMove("down")}
+          <IconButton
+            aria-label="backward"
+            onClick={() => handleMove("backward")}
             sx={{
               width: 50,
               height: 50,
-              backgroundColor: theme.palette.mode === "dark" ? "#505050" : "#dcdcdc",
+              backgroundColor:
+                theme.palette.mode === "dark" ? "#505050" : "#dcdcdc",
               ":hover": { backgroundColor: "background.paper" },
               mx: 1,
             }}
@@ -131,29 +142,7 @@ export default function ControlPanel() {
             <ArrowDropDownIcon color="primary" fontSize="large" />
           </IconButton>
         </Box>
-        
       </Box>
-
-      {/* Other buttons below */}
-      {/* <Box
-        display="flex"
-        justifyContent="center"
-        border="1px solid #ccc"
-        padding={2}
-        borderRadius={1}
-        mt={2}
-        gap={2}
-      >
-        <Button variant="contained" color="secondary">
-          Pause
-        </Button>
-        <Button variant="outlined" color="secondary">
-          Stop
-        </Button>
-        <Button variant="contained" color="primary">
-          Start
-        </Button>
-      </Box> */}
     </Box>
   );
 }

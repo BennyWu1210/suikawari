@@ -6,11 +6,7 @@ import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
 import Navbar from "./components/Navbar";
 import "./globals.css";
 
-export default function RootLayout({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   const [themeMode, setThemeMode] = useState<"light" | "dark">("dark");
 
   const toggleTheme = () => {
