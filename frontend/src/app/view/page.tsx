@@ -46,11 +46,22 @@ export default function Page() {
       >
         {/* Video Container */}
         <Box
-          flex="1"
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          sx={{ position: "relative", width: "100%" }}
+          // flex="1"
+          // display="flex"
+          // alignItems="center"
+          // justifyContent="center"
+          // sx={{ position: "relative", width: "100%" }}
+          sx={{
+            width: window.innerWidth > window.innerHeight ? "100%" : "auto",
+            height: window.innerWidth > window.innerHeight ? "auto" : "50vh",
+            maxHeight: "100%",
+            maxWidth: "100%",
+            flex:"1",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            position: "relative", // For positioning other elements if needed
+          }}
         >
           <video
             ref={videoRef}
