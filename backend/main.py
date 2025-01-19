@@ -4,9 +4,11 @@ import socketio
 import base64
 import numpy as np
 import time
-import math
+import base64
+import os
 from ultralytics import YOLO
 from tts.generate import generate_description
+from tts.coqui import generate_audio
 
 
 # Socket.IO client
@@ -30,8 +32,9 @@ async def handle_offer(data):
         # Convert binary data to a NumPy array
         np_array = np.frombuffer(binary_image, dtype=np.uint8)
         
+        
         # REMOVE ME: For testing purposes, we limit the incoming frame processing rate
-        if round(time.time()) % 15 != 0:
+        if round(time.time()) % 10 != 0:
             return
 
         print("STARTED")
@@ -43,6 +46,7 @@ async def handle_offer(data):
             print("Failed to decode image")
             return
 
+        print("STARTED")
 
         # YOLOv8 Inference
         results = model.predict(img, verbose=False)
@@ -62,10 +66,21 @@ async def handle_offer(data):
         # Generate a natural language description
         description = generate_description(object_labels)
 
-        # TODO: Audio output
+        print(description)
 
-        # Send detection results back
-        await sio.emit('processResult', {'result': description, 'viewer': data['viewer']})
+        # TODO: Audio 
+        # generate_audio(description, output_path="output.wav")
+
+        # Read the generated audio file and encode it as Base64
+        # with open("output.wav", "rb") as audio_file:
+        #     audio_base64 = base64.b64encode(audio_file.read()).decode('utf-8')
+
+        # Send detection results and audio data back
+        await sio.emit('processResult', {
+            'result': description,
+            'viewer': data['viewer'],
+            # 'audio': audio_base64
+        })
 
         cv2.imshow("Received Image", img)
         print("Image displayed")
@@ -74,12 +89,12 @@ async def handle_offer(data):
         print(f"Error handling image: {e}")
 
     # send the response as text to processResult socket
-    await sio.emit('processResult', {'result': 'result received', 'viewer': data['viewer']})
+    await sio.emit('processResult', {'result': 'no result sent this time', 'viewer': data['viewer']})
 
 
 async def main():
     # Connect to the signaling server
-    await sio.connect('http://localhost:5000')
+    await sio.connect('http://localhost:8000')
     await sio.wait()
 
 # Run the event loop

@@ -4,7 +4,7 @@ let socket;
 
 export function initializeSocket() {
   if (!socket) {
-    socket = io("http://localhost:5000");
+    socket = io("http://localhost:8000");
   }
   return socket;
 }
@@ -91,6 +91,9 @@ export async function camera() {
   // on socket.io processResult console log the result
   socket.on('processResult', (data) => {
       console.log(data);
+      var msg = new SpeechSynthesisUtterance();
+      msg.text = "Hello World";
+      window.speechSynthesis.speak(msg);
   });
 
   // Function to initialize the webcam
