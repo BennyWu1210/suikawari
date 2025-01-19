@@ -33,7 +33,7 @@ export default function Navbar({ themeMode, toggleTheme }: NavbarProps) {
               transition: "color 0.3s",
             }}
           >
-             Blinder      
+             🍉 Suikawari      
           </Typography>
           </NextLink>       
           {/* {path !== '/' && <NextLink href="/"> Back to Home </NextLink>} */}

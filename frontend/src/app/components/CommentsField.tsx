@@ -59,11 +59,7 @@ export default function CommentsField() {
   useEffect(() => {
     const socket = initializeSocket();
     socketRef.current = socket;
-
-    socket.emit("getComments");
-    socket.on("comments", (initialComments: string[]) => {
-      setComments(initialComments);
-    });
+    
     // Request initial comments
     socket.emit("getComments");
 
@@ -103,7 +99,9 @@ export default function CommentsField() {
     if (listRef.current) {
       listRef.current.scrollToItem(comments.length, "end");
     }
+    
     var msg = new SpeechSynthesisUtterance();
+    console.log('comments', comments[comments.length - 1]);
     msg.text = comments[comments.length - 1];
     window.speechSynthesis.speak(msg);
   }, [comments]);
@@ -143,7 +141,6 @@ export default function CommentsField() {
     <Box
       sx={{
         width: "100%",
-        // height: "85vh", // total height for the container
         height: containerHeight,
         bgcolor: "transparent",
         borderRadius: 2,
