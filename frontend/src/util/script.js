@@ -118,19 +118,19 @@ export async function camera() {
 
   let sema = true; // Semaphore to prevent multiple image captures
 
-  // on socket.io processResult console log the result
-  socket.on("processResult", (data) => {
-    console.log(data);
-    // var msg = new SpeechSynthesisUtterance();
-    // msg.text = data.result;
-    // window.speechSynthesis.speak(msg);
-    var msg = new SpeechSynthesisUtterance();
-    msg.rate = 1.1; // Speed of speech
-    msg.pitch = 1.2; // Pitch of voice
-    msg.volume = 1; // Volume level
-    msg.text = data.result;
-    window.speechSynthesis.speak(msg);
-  });
+  // // on socket.io processResult console log the result
+  // socket.on("processResult", (data) => {
+  //   console.log(data);
+  //   // var msg = new SpeechSynthesisUtterance();
+  //   // msg.text = data.result;
+  //   // window.speechSynthesis.speak(msg);
+  //   var msg = new SpeechSynthesisUtterance();
+  //   msg.rate = 1.1; // Speed of speech
+  //   msg.pitch = 1.2; // Pitch of voice
+  //   msg.volume = 1; // Volume level
+  //   msg.text = data.result;
+  //   window.speechSynthesis.speak(msg);
+  // });
 
   // Function to initialize the webcam
   async function initWebcam() {
@@ -170,6 +170,8 @@ export async function camera() {
 
   // Start the process
   await initWebcam();
+
+  return socket;
 }
 
 export async function setupViewer(videoElement) {
