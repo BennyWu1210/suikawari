@@ -8,9 +8,11 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
+  useMediaQuery
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import { FixedSizeList, ListChildComponentProps } from "react-window";
+import { initializeSocket } from "../script";
 
 interface FadeInSectionProps {
   children: React.ReactNode;
@@ -45,21 +47,41 @@ function FadeInSection({ children }: FadeInSectionProps) {
 }
 
 export default function CommentsField() {
-  const [comments, setComments] = useState<string[]>([
-    "Welcome to the chat~",
-    "Hello",
-    "Spam message",
-    "To make the comment",
-    "to be longer",
-    "hu",
-    "hi",
-    "ha",
-  ]);
+  const [comments, setComments] = useState<string[]>([]);
   const [newComment, setNewComment] = useState<string>("");
   const [listHeight, setListHeight] = useState<number>(0);
 
   const listRef = useRef<FixedSizeList<any>>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const socketRef = useRef<any>(null);
+
+  // Initialize Socket and listeners
+  useEffect(() => {
+    const socket = initializeSocket();
+    socketRef.current = socket;
+
+    socket.emit("getComments");
+    socket.on("comments", (initialComments: string[]) => {
+      setComments(initialComments);
+    });
+    // Request initial comments
+    socket.emit("getComments");
+
+    // Listen for initial comments response
+    socket.on("comments", (initialComments: string[]) => {
+      setComments(initialComments);
+    });
+
+    // Listen for new comment broadcast
+    socket.on("comment", (comment: string) => {
+      setComments((prev) => [...prev, comment]);
+    });
+
+    return () => {
+      socket.off("comments");
+      socket.off("comment");
+    };
+  }, []);
 
   // Measure height of the list container
   useEffect(() => {
@@ -81,11 +103,15 @@ export default function CommentsField() {
     if (listRef.current) {
       listRef.current.scrollToItem(comments.length, "end");
     }
+    var msg = new SpeechSynthesisUtterance();
+    msg.text = comments[comments.length - 1];
+    window.speechSynthesis.speak(msg);
   }, [comments]);
 
   const handleSendComment = () => {
     if (newComment.trim() === "") return;
-    setComments((prev) => [...prev, newComment.trim()]);
+    const commentText = newComment.trim();
+    socketRef.current.emit("comment", commentText);
     setNewComment("");
   };
 
@@ -107,20 +133,27 @@ export default function CommentsField() {
     );
   };
 
+  const isLargeScreen = useMediaQuery("(min-width:1024px)");
+  const isSmallScreen = useMediaQuery("(max-width:600px)");
+
+  const containerHeight = isLargeScreen ? "87vh" : isSmallScreen ? "50vh" : "60vh";
+
   return (
     <FadeInSection>
-  <Box
-    sx={{
-      width: "100%",
-      height: 350, // total height for the container
-      bgcolor: "transparent",
-      borderRadius: 2,
-      boxShadow: 2,
-      display: "flex",
-      flexDirection: "column",
-      overflow: "hidden",
-    }}
-  >
+    <Box
+      sx={{
+        width: "100%",
+        // height: "85vh", // total height for the container
+        height: containerHeight,
+        bgcolor: "transparent",
+        borderRadius: 2,
+        boxShadow: 2,
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+        paddingY: 2
+      }}
+    >
     {/* Container for measuring list height */}
     <Box ref={containerRef} sx={{ flex: 1, overflow: "hidden" }}>
       {listHeight > 0 && (
@@ -129,7 +162,7 @@ export default function CommentsField() {
           width="100%"
           itemSize={46}
           itemCount={comments.length}
-          overscanCount={5}
+          overscanCount={15}
           ref={listRef}
         >
           {renderRow}
@@ -156,6 +189,19 @@ export default function CommentsField() {
         value={newComment}
         onChange={(e) => setNewComment(e.target.value)}
         onKeyPress={handleKeyPress}
+        sx={{
+          "& .MuiOutlinedInput-root": {
+            "& fieldset": {
+              border: "none", // Remove the outline
+            },
+            "&:hover fieldset": {
+              border: "none", // Remove the outline on hover
+            },
+            "&.Mui-focused fieldset": {
+              border: "none", // Remove the outline when focused
+            },
+          },
+        }}
       />
       <IconButton
         color="primary"

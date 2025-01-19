@@ -8,6 +8,8 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 cameraSID = None
 otherCameras = []
 prossessingServer = None
+comments = []
+comments = []
 
 @app.route('/')
 def index():
@@ -98,6 +100,20 @@ def handle_image(data):
     # emit the image to the processing server
     print("Got image from camera, sending it to processing server")
     emit('image', {"image": data['image'], "viewer": request.sid}, to=prossessingServer)
+
+@socketio.on('comment')
+def handle_comment(data):
+    comments.append(data)
+    emit('comment', data, broadcast=True)
+
+# This needs something like
+# socket.on('comment', (data) => {
+#     CODE THAT ADDS THE COMMENT TO THE UI
+#})
+
+@socketio.on('getComments')
+def get_comments():
+    emit('comments', comments)
 
 if __name__ == '__main__':
     socketio.run(app, debug=True, port=8000)
