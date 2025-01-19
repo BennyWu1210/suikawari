@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
 import React, { useEffect, useRef, useState } from "react";
 import { Box, Paper, Button } from "@mui/material";
 import { setupCamera, apex } from "../../util/script.js";
 import { initializeSocket } from "@/util/script";
 
-export default function CamPage() {
+export default function ApexPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const socketRef = useRef<any>(null);
   const [audioEnabled, setAudioEnabled] = useState(false);
@@ -31,7 +31,7 @@ export default function CamPage() {
     // Request initial comments
     socket.emit("getComments");
 
-    // Listen for initial comments response
+    // Listen for comments from the server
     socket.on("comment", (comment: string) => {
       setCommentQueue((prevQueue) => [...prevQueue, comment]);
     });
@@ -44,12 +44,12 @@ export default function CamPage() {
   const handleSpeak = () => {
     if (commentQueue.length > 0) {
       const msg = new SpeechSynthesisUtterance();
-      msg.text = commentQueue.shift()!; // Get and remove the first comment
+      msg.text = commentQueue.shift()!;
       window.speechSynthesis.speak(msg);
 
-      // Continue playing the next comments in the queue after the current one finishes
       msg.onend = () => {
-        setCommentQueue((prevQueue) => [...prevQueue]); // Trigger re-render
+        // Trigger re-render to process next comment in the queue
+        setCommentQueue((prevQueue) => [...prevQueue]);
         handleSpeak();
       };
     }
@@ -57,6 +57,8 @@ export default function CamPage() {
 
   const enableAudio = () => {
     setAudioEnabled(true);
+
+    // Process the queue if there are comments
     if (commentQueue.length > 0) {
       handleSpeak();
     }
