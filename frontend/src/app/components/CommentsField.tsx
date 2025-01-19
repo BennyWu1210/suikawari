@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import { FixedSizeList, ListChildComponentProps } from "react-window";
-import { initializeSocket } from "../script";
+import { initializeSocket } from "@/util/script";
 
 interface FadeInSectionProps {
   children: React.ReactNode;
