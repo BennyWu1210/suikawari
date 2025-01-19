@@ -8,6 +8,7 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
+  useMediaQuery
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import { FixedSizeList, ListChildComponentProps } from "react-window";
@@ -107,18 +108,25 @@ export default function CommentsField() {
     );
   };
 
+  const isLargeScreen = useMediaQuery("(min-width:1024px)");
+  const isSmallScreen = useMediaQuery("(max-width:600px)");
+
+  const containerHeight = isLargeScreen ? "87vh" : isSmallScreen ? "50vh" : "60vh";
+
   return (
     <FadeInSection>
   <Box
     sx={{
       width: "100%",
-      height: 350, // total height for the container
+      // height: "85vh", // total height for the container
+      height: containerHeight,
       bgcolor: "transparent",
       borderRadius: 2,
       boxShadow: 2,
       display: "flex",
       flexDirection: "column",
       overflow: "hidden",
+      paddingY: 2
     }}
   >
     {/* Container for measuring list height */}
@@ -129,7 +137,7 @@ export default function CommentsField() {
           width="100%"
           itemSize={46}
           itemCount={comments.length}
-          overscanCount={5}
+          overscanCount={15}
           ref={listRef}
         >
           {renderRow}
@@ -156,6 +164,19 @@ export default function CommentsField() {
         value={newComment}
         onChange={(e) => setNewComment(e.target.value)}
         onKeyPress={handleKeyPress}
+        sx={{
+          "& .MuiOutlinedInput-root": {
+            "& fieldset": {
+              border: "none", // Remove the outline
+            },
+            "&:hover fieldset": {
+              border: "none", // Remove the outline on hover
+            },
+            "&.Mui-focused fieldset": {
+              border: "none", // Remove the outline when focused
+            },
+          },
+        }}
       />
       <IconButton
         color="primary"
