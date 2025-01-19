@@ -42,19 +42,6 @@ export default function CamPage() {
             className="w-full h-auto rounded shadow-lg"
           />
         </Box>
-        <Button
-          sx={{
-            marginTop: "16px",
-            color: "white",
-            background: "linear-gradient(to right, #4e54c8, #8f94fb)",
-            "&:hover": {
-              background: "linear-gradient(to right, #3b47a3, #6b6ee8)",
-            },
-          }}
-        >
-          <KeyboardBackspaceIcon />
-          Back to Main
-        </Button>
       </Paper>
     </div>
   );
