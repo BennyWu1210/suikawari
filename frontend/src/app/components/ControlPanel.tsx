@@ -8,7 +8,7 @@ import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import { useState, useEffect, useRef } from "react";
-import { initializeSocket } from "../script";
+import { initializeSocket } from "@/util/script";
 
 export default function ControlPanel() {
   const [comments, setComments] = useState<string[]>([]);
