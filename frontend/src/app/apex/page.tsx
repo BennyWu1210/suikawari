@@ -1,14 +1,13 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from "react";
-import { Box, Paper, Button } from "@mui/material";
+import { Box, Paper } from "@mui/material";
 import { setupCamera, apex } from "../../util/script.js";
 import { initializeSocket } from "@/util/script";
 
 export default function ApexPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const socketRef = useRef<any>(null);
-  const [audioEnabled, setAudioEnabled] = useState(false);
   const [commentQueue, setCommentQueue] = useState<string[]>([]);
 
   useEffect(() => {
@@ -41,28 +40,24 @@ export default function ApexPage() {
     };
   }, []);
 
-  const handleSpeak = () => {
-    if (commentQueue.length > 0) {
-      const msg = new SpeechSynthesisUtterance();
-      msg.text = commentQueue.shift()!;
-      window.speechSynthesis.speak(msg);
+  useEffect(() => {
+    const handleSpeak = () => {
+      if (commentQueue.length > 0) {
+        const msg = new SpeechSynthesisUtterance();
+        msg.text = commentQueue.shift()!;
+        window.speechSynthesis.speak(msg);
 
-      msg.onend = () => {
-        // Trigger re-render to process next comment in the queue
-        setCommentQueue((prevQueue) => [...prevQueue]);
-        handleSpeak();
-      };
-    }
-  };
+        msg.onend = () => {
+          // Trigger re-render to process next comment in the queue
+          setCommentQueue((prevQueue) => [...prevQueue]);
+          handleSpeak();
+        };
+      }
+    };
 
-  const enableAudio = () => {
-    setAudioEnabled(true);
-
-    // Process the queue if there are comments
-    if (commentQueue.length > 0) {
-      handleSpeak();
-    }
-  };
+    // Start speaking whenever the queue updates
+    handleSpeak();
+  }, [commentQueue]);
 
   return (
     <div className="relative z-10 flex items-center justify-center h-screen">
@@ -84,16 +79,6 @@ export default function ApexPage() {
             playsInline
             className="w-full h-auto rounded shadow-lg"
           />
-          {!audioEnabled && (
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{ marginTop: "16px" }}
-              onClick={enableAudio}
-            >
-              Enable Audio
-            </Button>
-          )}
         </Box>
       </Paper>
     </div>
