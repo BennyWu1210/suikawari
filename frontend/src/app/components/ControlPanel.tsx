@@ -8,6 +8,7 @@ import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import SmartToyIcon from "@mui/icons-material/SmartToy";
 import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 import VolumeOffIcon from "@mui/icons-material/VolumeOff";
+import PanToolIcon from '@mui/icons-material/PanTool';
 import { useState, useEffect, useRef } from "react";
 import { initializeSocket } from "@/util/script";
 
@@ -60,6 +61,9 @@ export default function ControlPanel({ speechActive, setSpeechActive }: ControlP
         case "right":
           handleSendComment("turn right");
           break;
+        case "stop":
+          handleSendComment("STOP!");
+            break;
         default:
           break;
       }
@@ -88,8 +92,8 @@ export default function ControlPanel({ speechActive, setSpeechActive }: ControlP
           <IconButton aria-label="left" onClick={() => handleMove("left")} sx={buttonStyle}>
             <ArrowLeftIcon color="primary" fontSize="large" />
           </IconButton>
-          <IconButton aria-label="ai" onClick={() => handleMove("ai")} sx={buttonStyle}>
-            <SmartToyIcon color="primary" fontSize="large" />
+          <IconButton aria-label="stop" onClick={() => handleMove("stop")} sx={buttonStyle}>
+            <PanToolIcon color="primary" fontSize="large" />
           </IconButton>
           <IconButton aria-label="right" onClick={() => handleMove("right")} sx={buttonStyle}>
             <ArrowRightIcon color="primary" fontSize="large" />
@@ -100,6 +104,10 @@ export default function ControlPanel({ speechActive, setSpeechActive }: ControlP
         </IconButton>
       </Box>
 
+      <IconButton aria-label="ai" onClick={() => handleMove("stop")} sx={buttonStyle}>
+        <SmartToyIcon color="primary" fontSize="large" />
+      </IconButton>
+      
       {/* Voice toggle button */}
       <IconButton
         aria-label="toggle-speech"
