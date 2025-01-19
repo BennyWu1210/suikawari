@@ -34,7 +34,7 @@ async def handle_offer(data):
         
         
         # REMOVE ME: For testing purposes, we limit the incoming frame processing rate
-        if round(time.time()) % 10 != 0:
+        if round(time.time()) % 18 != 0:
             return
 
         print("STARTED")
@@ -89,7 +89,7 @@ async def handle_offer(data):
         print(f"Error handling image: {e}")
 
     # send the response as text to processResult socket
-    await sio.emit('processResult', {'result': 'no result sent this time', 'viewer': data['viewer']})
+    # await sio.emit('processResult', {'result': 'no result sent this time', 'viewer': data['viewer']})
 
 
 async def main():

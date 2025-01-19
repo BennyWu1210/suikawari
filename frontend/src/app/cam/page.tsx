@@ -3,7 +3,7 @@
 import React, { useEffect, useRef } from "react";
 import { Box, Paper, Button } from "@mui/material";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
-import { camera } from "../script.js";
+import { camera } from "../../util/script.js";
 
 export default function CamPage() {
   const videoRef = useRef<HTMLVideoElement>(null);

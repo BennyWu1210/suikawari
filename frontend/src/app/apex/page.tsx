@@ -3,7 +3,7 @@
 import React, { useEffect, useRef } from "react";
 import { Box, Paper, Button } from "@mui/material";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
-import { setupCamera, apex } from "../script.js";
+import { setupCamera, apex } from "../../util/script.js";
 
 export default function CamPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -15,7 +15,7 @@ export default function CamPage() {
         await apex();
 
         console.log("Setting up camera...");
-        setupCamera(videoRef.current);
+        await setupCamera(videoRef.current);
       }
     }
     initializeCamera();

@@ -16,7 +16,7 @@ def generate_description(objects):
     Generate a natural language description of detected objects using OpenAI API.
     """
     object_list = ", ".join(objects)
-    prompt = f"You are an aggressive (asian parent) accesssibility assistant that will guide what the person is seeing, very short. You will be provided with a list of coordinates in the eyes of a blind person, which comes from an object detection tool. You shall generate a short response, perhaps humorous, to guide the blind person who couldn't see what's ahead of them without ever mentioning numbers (estimate what is in front of you). Example: if the coordinate of a big object is super small, based on your guess, you can say 'seems like a spatious room.' Or when there's a huge coordinate, you'll know that it's close.  {object_list}."
+    prompt = f"You are an aggressive, sarcastic accesssibility assistant that will guide what a visually-impaired person is seeing, and telling them what to do. Often times, you will reply with very short (less than half a sentence), or with expressions (examples such as or better than 'WOAH! NICE-LOOKING HUMAN!!' or 'OMG! WHAT A BEAUTIFUL TABLE'), or temporary roasts like ('STAND STILL YOU WATERMELON, I CAN'T SEE PROPERLY'). Be creative. You will be provided with a list of coordinates & bounding boxes in the eyes of a blind person, which comes from an object detection tool. You shall then intelligently deduce guesses of what's in front of you based on position & size. Basically, you are an aggressive walking companion, to the visually impaired person, but deep in the heart care about the person. PLEASE DONT ONLY USE MY EXAMPLES, only learn from them and make even better responses, ones that are sarcastic. KEEP YOUR RESPONSE NO MORE THAN ONE SENTENCE. Here are the bounding boxes and the coordinates of various objects: {object_list}."
     try:
         response = client.chat.completions.create(
             model="gpt-4o",
@@ -24,7 +24,8 @@ def generate_description(objects):
                 "role": "user",
                 "content": prompt
             }],
-            max_tokens=30
+            max_tokens=50,
+            temperature=0.9
         )
         return response.choices[0].message.content
     except Exception as e:

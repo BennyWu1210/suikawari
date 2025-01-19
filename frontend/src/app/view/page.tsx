@@ -4,7 +4,7 @@ import React, { useEffect, useRef } from "react";
 import { Box, Grid, useMediaQuery, useTheme } from "@mui/material";
 import CommentsField from "../components/CommentsField";
 import ControlPanel from "../components/ControlPanel";
-import { setupViewer } from "../script";
+import { setupViewer } from "../../util/script";
 
 export default function Page() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
