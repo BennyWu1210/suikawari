@@ -8,6 +8,7 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
+  useMediaQuery
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import { FixedSizeList, ListChildComponentProps } from "react-window";
@@ -132,20 +133,27 @@ export default function CommentsField() {
     );
   };
 
+  const isLargeScreen = useMediaQuery("(min-width:1024px)");
+  const isSmallScreen = useMediaQuery("(max-width:600px)");
+
+  const containerHeight = isLargeScreen ? "87vh" : isSmallScreen ? "50vh" : "60vh";
+
   return (
     <FadeInSection>
-      <Box
-        sx={{
-          width: "100%",
-          height: 350, // total height for the container
-          bgcolor: "transparent",
-          borderRadius: 2,
-          boxShadow: 2,
-          display: "flex",
-          flexDirection: "column",
-          overflow: "hidden",
-        }}
-      >
+    <Box
+      sx={{
+        width: "100%",
+        // height: "85vh", // total height for the container
+        height: containerHeight,
+        bgcolor: "transparent",
+        borderRadius: 2,
+        boxShadow: 2,
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+        paddingY: 2
+      }}
+    >
     {/* Container for measuring list height */}
     <Box ref={containerRef} sx={{ flex: 1, overflow: "hidden" }}>
       {listHeight > 0 && (
@@ -154,7 +162,7 @@ export default function CommentsField() {
           width="100%"
           itemSize={46}
           itemCount={comments.length}
-          overscanCount={5}
+          overscanCount={15}
           ref={listRef}
         >
           {renderRow}
