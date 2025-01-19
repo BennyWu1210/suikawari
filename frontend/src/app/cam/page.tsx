@@ -27,6 +27,10 @@ export default function CamPage() {
         msg.rate = 1.1; // Speed of speech
         msg.pitch = 1.1; // Pitch of voice
         msg.volume = 1; // Volume level
+
+        if (typeof data.result === "object") {
+          return;
+        }
         msg.text = data.result;
         window.speechSynthesis.speak(msg);
       });
