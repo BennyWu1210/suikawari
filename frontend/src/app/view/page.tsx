@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
-import { Box, Grid, useMediaQuery, useTheme } from "@mui/material";
+import React, { useEffect, useRef, useState } from "react";
+import { Box, useMediaQuery, useTheme } from "@mui/material";
 import CommentsField from "../components/CommentsField";
 import ControlPanel from "../components/ControlPanel";
 import { setupViewer } from "../../util/script";
@@ -9,8 +9,10 @@ import { setupViewer } from "../../util/script";
 export default function Page() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const theme = useTheme();
-  // const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
   const isSmallScreen = useMediaQuery("(max-width:600px)");
+  
+  // Lift the speech toggle state here
+  const [speechActive, setSpeechActive] = useState<boolean>(true);
 
   useEffect(() => {
     if (videoRef.current) {
@@ -19,15 +21,14 @@ export default function Page() {
     }
   }, []);
 
-  // Define known heights (adjust these values as needed)
   const navbarHeight = 64; // Example navbar height in px
 
   return (
     <Box
       height={`calc(100vh - ${navbarHeight}px)`}
       overflow="hidden"
-      className="py-2"
       display="flex"
+      padding={4}
       flexDirection={isSmallScreen ? "column" : "row"}
     >
       {/* Video and Control Panel Section */}
@@ -45,11 +46,22 @@ export default function Page() {
       >
         {/* Video Container */}
         <Box
-          flex="1"
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          sx={{ position: "relative", width: "100%" }}
+          // flex="1"
+          // display="flex"
+          // alignItems="center"
+          // justifyContent="center"
+          // sx={{ position: "relative", width: "100%" }}
+          sx={{
+            width: window.innerWidth > window.innerHeight ? "100%" : "auto",
+            height: window.innerWidth > window.innerHeight ? "auto" : "50vh",
+            maxHeight: "100%",
+            maxWidth: "100%",
+            flex:"1",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            position: "relative", // For positioning other elements if needed
+          }}
         >
           <video
             ref={videoRef}
@@ -76,7 +88,8 @@ export default function Page() {
                 p: 1,
               }}
             >
-              <ControlPanel />
+              {/* Pass speech props to ControlPanel */}
+              <ControlPanel speechActive={speechActive} setSpeechActive={setSpeechActive} />
             </Box>
           )}
         </Box>
@@ -89,11 +102,11 @@ export default function Page() {
             justifyContent="center"
             sx={{
               width: "100%",
-              flex: isSmallScreen ? "none" : "0 0 auto",
-              marginTop: isSmallScreen ? "16px" : "auto",
+              marginTop: "auto",
             }}
           >
-            <ControlPanel />
+            {/* Pass speech props to ControlPanel */}
+            <ControlPanel speechActive={speechActive} setSpeechActive={setSpeechActive} />
           </Box>
         )}
       </Box>
@@ -107,7 +120,8 @@ export default function Page() {
           overflow: "auto",
         }}
       >
-        <CommentsField />
+        {/* Pass speechActive prop to CommentsField */}
+        <CommentsField speechActive={speechActive} />
       </Box>
     </Box>
   );

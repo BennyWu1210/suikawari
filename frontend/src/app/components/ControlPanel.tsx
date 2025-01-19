@@ -1,4 +1,3 @@
-// src/components/ControlPanel.tsx
 "use client";
 
 import { Box, IconButton, useTheme } from "@mui/material";
@@ -7,10 +6,18 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import SmartToyIcon from "@mui/icons-material/SmartToy";
+import VolumeUpIcon from "@mui/icons-material/VolumeUp";
+import VolumeOffIcon from "@mui/icons-material/VolumeOff";
+import PanToolIcon from '@mui/icons-material/PanTool';
 import { useState, useEffect, useRef } from "react";
 import { initializeSocket } from "@/util/script";
 
-export default function ControlPanel() {
+interface ControlPanelProps {
+  speechActive: boolean;
+  setSpeechActive: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export default function ControlPanel({ speechActive, setSpeechActive }: ControlPanelProps) {
   const [comments, setComments] = useState<string[]>([]);
   const theme = useTheme();
   const socketRef = useRef<any>(null);
@@ -36,10 +43,10 @@ export default function ControlPanel() {
   const handleSendComment = (commentText: string) => {
     socketRef.current.emit("comment", commentText);
   };
+
   const handleMove = (direction: string) => {
     console.log(`Move: ${direction}`);
 
-    // Emit movement command via socket
     if (socketRef.current) {
       switch (direction) {
         case "forward":
@@ -54,95 +61,65 @@ export default function ControlPanel() {
         case "right":
           handleSendComment("turn right");
           break;
+        case "stop":
+          handleSendComment("STOP!");
+            break;
         default:
-          // ai logic here
           break;
       }
     }
   };
 
+  // Common styling for icon buttons
+  const buttonStyle = {
+    width: 50,
+    height: 50,
+    backgroundColor: theme.palette.mode === "dark" ? "#505050" : "#dcdcdc",
+    ":hover": { backgroundColor: "background.paper" },
+    m: 0.5,
+  };
+
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" mt={2}>
-      <Box display="flex" flexDirection="column" alignItems="center">
-        {/* Up */}
-        <IconButton
-          aria-label="forward"
-          onClick={() => handleMove("forward")}
-          sx={{
-            width: 50,
-            height: 50,
-            backgroundColor:
-              theme.palette.mode === "dark" ? "#505050" : "#dcdcdc",
-            ":hover": { backgroundColor: "background.paper" },
-          }}
-        >
+    <Box display="flex" alignItems="center" gap={4} marginTop={2} sx={{
+      flexDirection: { xs: "column", md: "row" }, 
+    }}>
+      {/* Directional control buttons */}
+      <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
+        <IconButton aria-label="forward" onClick={() => handleMove("forward")} sx={buttonStyle}>
           <ArrowDropUpIcon color="primary" fontSize="large" />
         </IconButton>
-
-        {/* Left, Right */}
-        <Box display="flex" justifyContent="center" mt={1}>
-          <IconButton
-            aria-label="left"
-            onClick={() => handleMove("left")}
-            sx={{
-              width: 50,
-              height: 50,
-              backgroundColor:
-                theme.palette.mode === "dark" ? "#505050" : "#dcdcdc",
-              ":hover": { backgroundColor: "background.paper" },
-              mx: 1,
-            }}
-          >
+        <Box display="flex" justifyContent="center" gap={1}>
+          <IconButton aria-label="left" onClick={() => handleMove("left")} sx={buttonStyle}>
             <ArrowLeftIcon color="primary" fontSize="large" />
           </IconButton>
-          <IconButton
-            aria-label="ai"
-            onClick={() => handleMove("ai")} // Sending AI command or similar
-            sx={{
-              width: 50,
-              height: 50,
-              backgroundColor:
-                theme.palette.mode === "dark" ? "#505050" : "#dcdcdc",
-              ":hover": { backgroundColor: "background.paper" },
-              mx: 1,
-            }}
-          >
-            <SmartToyIcon color="primary" fontSize="large" />
+          <IconButton aria-label="stop" onClick={() => handleMove("stop")} sx={buttonStyle}>
+            <PanToolIcon color="primary" fontSize="large" />
           </IconButton>
-          <IconButton
-            aria-label="right"
-            onClick={() => handleMove("right")}
-            sx={{
-              width: 50,
-              height: 50,
-              backgroundColor:
-                theme.palette.mode === "dark" ? "#505050" : "#dcdcdc",
-              ":hover": { backgroundColor: "background.paper" },
-              mx: 1,
-            }}
-          >
+          <IconButton aria-label="right" onClick={() => handleMove("right")} sx={buttonStyle}>
             <ArrowRightIcon color="primary" fontSize="large" />
           </IconButton>
         </Box>
-
-        {/* Down */}
-        <Box display="flex" justifyContent="center" mt={1}>
-          <IconButton
-            aria-label="backward"
-            onClick={() => handleMove("backward")}
-            sx={{
-              width: 50,
-              height: 50,
-              backgroundColor:
-                theme.palette.mode === "dark" ? "#505050" : "#dcdcdc",
-              ":hover": { backgroundColor: "background.paper" },
-              mx: 1,
-            }}
-          >
-            <ArrowDropDownIcon color="primary" fontSize="large" />
-          </IconButton>
-        </Box>
+        <IconButton aria-label="backward" onClick={() => handleMove("backward")} sx={buttonStyle}>
+          <ArrowDropDownIcon color="primary" fontSize="large" />
+        </IconButton>
       </Box>
+
+      <IconButton aria-label="ai" onClick={() => handleMove("stop")} sx={buttonStyle}>
+        <SmartToyIcon color="primary" fontSize="large" />
+      </IconButton>
+      
+      {/* Voice toggle button */}
+      <IconButton
+        aria-label="toggle-speech"
+        onClick={() => setSpeechActive(!speechActive)}
+        sx={buttonStyle}
+      >
+        {speechActive ? (
+          <VolumeUpIcon color="primary" fontSize="large" />
+        ) : (
+          <VolumeOffIcon color="primary" fontSize="large" />
+        )}
+      </IconButton>
     </Box>
   );
 }

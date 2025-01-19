@@ -1,12 +1,15 @@
-"use client";
+'use client';
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Box, Paper, Button } from "@mui/material";
-import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import { setupCamera, apex, camera } from "../../util/script.js";
+import { initializeSocket } from "@/util/script";
 
-export default function CamPage() {
+export default function ApexPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const socketRef = useRef<any>(null);
+  const [commentQueue, setCommentQueue] = useState<string[]>([]);
+  const [audioEnabled, setAudioEnabled] = useState(false);
 
   useEffect(() => {
     async function initializeCamera() {
@@ -21,6 +24,53 @@ export default function CamPage() {
     initializeCamera();
   }, []);
 
+  useEffect(() => {
+    const socket = initializeSocket();
+    socketRef.current = socket;
+
+    // Request initial comments
+    socket.emit("getComments");
+
+    // Listen for comments from the server
+    socket.on("comment", (comment: string) => {
+      setCommentQueue((prevQueue) => [...prevQueue, comment]);
+    });
+
+    return () => {
+      socket.off("comment");
+    };
+  }, []);
+
+  useEffect(() => {
+    if (audioEnabled) {
+      const handleSpeak = () => {
+        if (commentQueue.length > 0) {
+          const msg = new SpeechSynthesisUtterance();
+          msg.text = commentQueue.shift()!;
+          window.speechSynthesis.speak(msg);
+
+          msg.onend = () => {
+            // Trigger re-render to process next comment in the queue
+            setCommentQueue((prevQueue) => [...prevQueue]);
+            handleSpeak();
+          };
+        }
+      };
+
+      // Start speaking whenever the queue updates
+      handleSpeak();
+    }
+  }, [commentQueue, audioEnabled]);
+
+  // Enable audio with user interaction for iOS compatibility
+  const enableAudio = () => {
+    const silentUtterance = new SpeechSynthesisUtterance("hello");
+    silentUtterance.volume = 0; // Silent speech
+    window.speechSynthesis.speak(silentUtterance);
+    setAudioEnabled(true);
+    console.log("Speech Synthesis API enabled.");
+  };
+
   return (
     <div className="relative z-10 flex items-center justify-center h-screen">
       <Paper
@@ -32,7 +82,7 @@ export default function CamPage() {
           borderRadius: "12px",
         }}
       >
-        <Box className="flex justify-center items-center w-full h-auto">
+        <Box className="flex flex-col justify-center items-center w-full h-auto">
           <video
             ref={videoRef}
             id="camera"
@@ -41,20 +91,17 @@ export default function CamPage() {
             playsInline
             className="w-full h-auto rounded shadow-lg"
           />
+          {!audioEnabled && (
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{ marginTop: "16px" }}
+              onClick={enableAudio}
+            >
+              Enable Audio
+            </Button>
+          )}
         </Box>
-        <Button
-          sx={{
-            marginTop: "16px",
-            color: "white",
-            background: "linear-gradient(to right, #4e54c8, #8f94fb)",
-            "&:hover": {
-              background: "linear-gradient(to right, #3b47a3, #6b6ee8)",
-            },
-          }}
-        >
-          <KeyboardBackspaceIcon />
-          Back to Main
-        </Button>
       </Paper>
     </div>
   );
