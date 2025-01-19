@@ -17,7 +17,7 @@ export default function CamPage() {
 
 
       // on socket.io processResult console log the result
-      socket.on("processResult", (data) => {
+      socket.on("processResult", (data: any) => {
         console.log(data);
         setAudioData(data);
         // var msg = new SpeechSynthesisUtterance();
