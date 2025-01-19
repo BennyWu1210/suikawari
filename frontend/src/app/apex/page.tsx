@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
-import { Box, Paper, Button } from "@mui/material";
-import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
+import { Box, Paper } from "@mui/material";
 import { setupCamera, apex } from "../../util/script.js";
+import { initializeSocket } from "@/util/script";
 
 export default function CamPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const socketRef = useRef<any>(null);
 
   useEffect(() => {
     async function initializeCamera() {
@@ -19,6 +20,25 @@ export default function CamPage() {
       }
     }
     initializeCamera();
+  }, []);
+  
+  useEffect(() => {
+    const socket = initializeSocket();
+    socketRef.current = socket;
+
+    // Request initial comments
+    socket.emit("getComments");
+
+    // Listen for initial comments response
+    socket.on("comment", (comment: string) => {
+      var msg = new SpeechSynthesisUtterance();
+      msg.text = comment;
+      window.speechSynthesis.speak(msg);
+    });
+
+    return () => {
+      socket.off("comment");
+    };
   }, []);
 
   return (
